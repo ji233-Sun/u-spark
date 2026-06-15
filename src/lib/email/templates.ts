@@ -60,6 +60,11 @@ const TEMPLATES = {
 		subject: "【U-Spark】流程完成",
 		body: `恭喜！项目「${d.projectTitle}」全流程已完成。`,
 	}),
+	// ── 稿酬类（T25 稿酬分配）──
+	remuneration_assigned: (d) => ({
+		subject: "【U-Spark】稿酬已核定",
+		body: `你的项目「${d.projectTitle}」已核定稿酬 ${d.amount} 元，请在信息补充阶段上传收款码。`,
+	}),
 	// ── 提醒类（T29 DDL 提醒）──
 	ddl_reminder: (d) => ({
 		subject: "【U-Spark】截止提醒",

@@ -17,6 +17,7 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrganizerProposalsRouteImport } from './routes/organizer.proposals'
+import { Route as OrganizerPaymentsRouteImport } from './routes/organizer.payments'
 import { Route as OrganizerManuscriptsRouteImport } from './routes/organizer.manuscripts'
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as FilesSplatRouteImport } from './routes/files.$'
@@ -32,6 +33,7 @@ import { Route as ApiProjectsManuscriptsRouteImport } from './routes/api/project
 import { Route as ApiProjectsAuthorsRouteImport } from './routes/api/projects/authors'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
 import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organizer/proposals'
+import { Route as ApiOrganizerPaymentsRouteImport } from './routes/api/organizer/payments'
 import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -75,6 +77,11 @@ const IndexRoute = IndexRouteImport.update({
 const OrganizerProposalsRoute = OrganizerProposalsRouteImport.update({
   id: '/organizer/proposals',
   path: '/organizer/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizerPaymentsRoute = OrganizerPaymentsRouteImport.update({
+  id: '/organizer/payments',
+  path: '/organizer/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrganizerManuscriptsRoute = OrganizerManuscriptsRouteImport.update({
@@ -154,6 +161,11 @@ const ApiOrganizerProposalsRoute = ApiOrganizerProposalsRouteImport.update({
   path: '/api/organizer/proposals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizerPaymentsRoute = ApiOrganizerPaymentsRouteImport.update({
+  id: '/api/organizer/payments',
+  path: '/api/organizer/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOrganizerManuscriptsRoute = ApiOrganizerManuscriptsRouteImport.update({
   id: '/api/organizer/manuscripts',
   path: '/api/organizer/manuscripts',
@@ -192,11 +204,13 @@ export interface FileRoutesByFullPath {
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
+  '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
+  '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
@@ -221,11 +235,13 @@ export interface FileRoutesByTo {
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
+  '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
+  '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
@@ -251,11 +267,13 @@ export interface FileRoutesById {
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
+  '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
+  '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
@@ -282,11 +300,13 @@ export interface FileRouteTypes {
     | '/files/$'
     | '/my/proposals'
     | '/organizer/manuscripts'
+    | '/organizer/payments'
     | '/organizer/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
     | '/api/organizer/manuscripts'
+    | '/api/organizer/payments'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
     | '/api/projects/authors'
@@ -311,11 +331,13 @@ export interface FileRouteTypes {
     | '/files/$'
     | '/my/proposals'
     | '/organizer/manuscripts'
+    | '/organizer/payments'
     | '/organizer/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
     | '/api/organizer/manuscripts'
+    | '/api/organizer/payments'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
     | '/api/projects/authors'
@@ -340,11 +362,13 @@ export interface FileRouteTypes {
     | '/files/$'
     | '/my/proposals'
     | '/organizer/manuscripts'
+    | '/organizer/payments'
     | '/organizer/proposals'
     | '/activities_/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
     | '/api/organizer/manuscripts'
+    | '/api/organizer/payments'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
     | '/api/projects/authors'
@@ -370,10 +394,12 @@ export interface RootRouteChildren {
   FilesSplatRoute: typeof FilesSplatRoute
   MyProposalsRoute: typeof MyProposalsRoute
   OrganizerManuscriptsRoute: typeof OrganizerManuscriptsRoute
+  OrganizerPaymentsRoute: typeof OrganizerPaymentsRoute
   OrganizerProposalsRoute: typeof OrganizerProposalsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
+  ApiOrganizerPaymentsRoute: typeof ApiOrganizerPaymentsRoute
   ApiOrganizerProposalsRoute: typeof ApiOrganizerProposalsRoute
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
   ApiProjectsAuthorsRoute: typeof ApiProjectsAuthorsRoute
@@ -439,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/organizer/proposals'
       fullPath: '/organizer/proposals'
       preLoaderRoute: typeof OrganizerProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organizer/payments': {
+      id: '/organizer/payments'
+      path: '/organizer/payments'
+      fullPath: '/organizer/payments'
+      preLoaderRoute: typeof OrganizerPaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/organizer/manuscripts': {
@@ -546,6 +579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOrganizerProposalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/organizer/payments': {
+      id: '/api/organizer/payments'
+      path: '/api/organizer/payments'
+      fullPath: '/api/organizer/payments'
+      preLoaderRoute: typeof ApiOrganizerPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/organizer/manuscripts': {
       id: '/api/organizer/manuscripts'
       path: '/api/organizer/manuscripts'
@@ -604,10 +644,12 @@ const rootRouteChildren: RootRouteChildren = {
   FilesSplatRoute: FilesSplatRoute,
   MyProposalsRoute: MyProposalsRoute,
   OrganizerManuscriptsRoute: OrganizerManuscriptsRoute,
+  OrganizerPaymentsRoute: OrganizerPaymentsRoute,
   OrganizerProposalsRoute: OrganizerProposalsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
+  ApiOrganizerPaymentsRoute: ApiOrganizerPaymentsRoute,
   ApiOrganizerProposalsRoute: ApiOrganizerProposalsRoute,
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
   ApiProjectsAuthorsRoute: ApiProjectsAuthorsRoute,
