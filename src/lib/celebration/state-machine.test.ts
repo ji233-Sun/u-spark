@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 import { manuscriptStatus, projectStatus } from "../../db/enums.ts";
 import {
 	ACTION_DEADLINE,
+	activityEndsAt,
 	assertProjectTransition,
 	canManuscriptTransition,
 	canProjectTransition,
+	deriveActivityTimeline,
 	effectiveDeadline,
 	InvalidTransitionError,
 	isActionBlockedByDeadline,
@@ -151,5 +153,92 @@ describe("DDL 守卫（读时派生）", () => {
 		expect(ACTION_DEADLINE.submit_proposal).toBe("proposal");
 		expect(ACTION_DEADLINE.submit_manuscript).toBe("submission");
 		expect(ACTION_DEADLINE.supplement_info).toBe("info_supplement");
+	});
+});
+
+describe("活动状态计算（T12：时间线读时派生）", () => {
+	const t = (iso: string) => new Date(iso);
+	const schedule = {
+		startAt: t("2026-06-01T00:00:00Z"),
+		proposalDeadline: t("2026-06-10T00:00:00Z"),
+		submissionDeadline: t("2026-06-20T00:00:00Z"),
+		infoSupplementDeadline: t("2026-06-30T00:00:00Z"),
+	};
+
+	it("活动结束时间 = max(三类 DDL)，不依赖独立结束字段", () => {
+		expect(
+			activityEndsAt({
+				proposal: t("2026-06-30T00:00:00Z"),
+				submission: t("2026-06-20T00:00:00Z"),
+				info_supplement: t("2026-06-25T00:00:00Z"),
+			}),
+		).toEqual(t("2026-06-30T00:00:00Z"));
+	});
+
+	it("开始前派生为待开始，但倒计时仍指向当前阶段的下一个 DDL：立项截止", () => {
+		expect(
+			deriveActivityTimeline(schedule, t("2026-05-31T00:00:00Z")),
+		).toMatchObject({
+			status: "not_started",
+			phase: "proposal",
+			nextDeadline: schedule.proposalDeadline,
+			nextDeadlineKind: "proposal",
+			millisecondsUntilNextDeadline: 10 * 24 * 60 * 60 * 1000,
+		});
+	});
+
+	it("开始时刻即为进行中，立项截止当天仍以立项 DDL 倒计时", () => {
+		expect(deriveActivityTimeline(schedule, schedule.startAt)).toMatchObject({
+			status: "ongoing",
+			phase: "proposal",
+			nextDeadlineKind: "proposal",
+		});
+		expect(
+			deriveActivityTimeline(schedule, schedule.proposalDeadline),
+		).toMatchObject({
+			status: "ongoing",
+			phase: "proposal",
+			nextDeadline: schedule.proposalDeadline,
+			millisecondsUntilNextDeadline: 0,
+		});
+	});
+
+	it("超过立项 DDL 后进入稿件提交倒计时，再进入信息补充倒计时", () => {
+		expect(
+			deriveActivityTimeline(schedule, t("2026-06-10T00:00:00.001Z")),
+		).toMatchObject({
+			status: "ongoing",
+			phase: "submission",
+			nextDeadline: schedule.submissionDeadline,
+			nextDeadlineKind: "submission",
+		});
+		expect(
+			deriveActivityTimeline(schedule, t("2026-06-20T00:00:00.001Z")),
+		).toMatchObject({
+			status: "ongoing",
+			phase: "info_supplement",
+			nextDeadline: schedule.infoSupplementDeadline,
+			nextDeadlineKind: "info_supplement",
+		});
+	});
+
+	it("最终 DDL 边界：等于信息补充截止仍进行中，超过后已结束且无倒计时", () => {
+		expect(
+			deriveActivityTimeline(schedule, schedule.infoSupplementDeadline),
+		).toMatchObject({
+			status: "ongoing",
+			phase: "info_supplement",
+			nextDeadline: schedule.infoSupplementDeadline,
+			millisecondsUntilNextDeadline: 0,
+		});
+		expect(
+			deriveActivityTimeline(schedule, t("2026-06-30T00:00:00.001Z")),
+		).toMatchObject({
+			status: "ended",
+			phase: "ended",
+			nextDeadline: null,
+			nextDeadlineKind: null,
+			millisecondsUntilNextDeadline: null,
+		});
 	});
 });

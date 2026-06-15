@@ -138,6 +138,24 @@ export function notificationForManuscriptStatus(
 
 // ── DDL 守卫（读时派生，不物理改状态；T01 ①）──
 export type DeadlineKind = "proposal" | "submission" | "info_supplement";
+export type ActivityTimelineStatus = "not_started" | "ongoing" | "ended";
+export type ActivityDeadlinePhase = DeadlineKind | "ended";
+
+export type ActivitySchedule = {
+	startAt: Date;
+	proposalDeadline: Date;
+	submissionDeadline: Date;
+	infoSupplementDeadline: Date;
+};
+
+export type DerivedActivityTimeline = {
+	status: ActivityTimelineStatus;
+	phase: ActivityDeadlinePhase;
+	endsAt: Date;
+	nextDeadline: Date | null;
+	nextDeadlineKind: DeadlineKind | null;
+	millisecondsUntilNextDeadline: number | null;
+};
 
 // 推进动作受哪个 DDL 约束
 export const ACTION_DEADLINE = {
@@ -167,4 +185,56 @@ export function isActionBlockedByDeadline(
 	now: Date,
 ): boolean {
 	return isOverdue(effectiveDeadline(activityLevel, projectSpecial), now);
+}
+
+export function activityEndsAt(deadlines: Record<DeadlineKind, Date>): Date {
+	return new Date(
+		Math.max(
+			deadlines.proposal.getTime(),
+			deadlines.submission.getTime(),
+			deadlines.info_supplement.getTime(),
+		),
+	);
+}
+
+export function deriveActivityTimeline(
+	schedule: ActivitySchedule,
+	now: Date,
+): DerivedActivityTimeline {
+	const deadlines = {
+		proposal: schedule.proposalDeadline,
+		submission: schedule.submissionDeadline,
+		info_supplement: schedule.infoSupplementDeadline,
+	} satisfies Record<DeadlineKind, Date>;
+	const endsAt = activityEndsAt(deadlines);
+
+	const status =
+		now.getTime() < schedule.startAt.getTime()
+			? "not_started"
+			: now.getTime() > endsAt.getTime()
+				? "ended"
+				: "ongoing";
+
+	const next =
+		now.getTime() <= deadlines.proposal.getTime()
+			? { kind: "proposal" as const, deadline: deadlines.proposal }
+			: now.getTime() <= deadlines.submission.getTime()
+				? { kind: "submission" as const, deadline: deadlines.submission }
+				: now.getTime() <= deadlines.info_supplement.getTime()
+					? {
+							kind: "info_supplement" as const,
+							deadline: deadlines.info_supplement,
+						}
+					: null;
+
+	return {
+		status,
+		phase: next?.kind ?? "ended",
+		endsAt,
+		nextDeadline: next?.deadline ?? null,
+		nextDeadlineKind: next?.kind ?? null,
+		millisecondsUntilNextDeadline: next
+			? Math.max(0, next.deadline.getTime() - now.getTime())
+			: null,
+	};
 }
