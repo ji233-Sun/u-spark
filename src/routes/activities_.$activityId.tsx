@@ -4,7 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import { StatusBadge } from "#/components/ui/StatusBadge";
 import { user } from "#/db/auth-schema";
-import { activity, activityOrganizer } from "#/db/celebration-schema";
+import { activity, activityOrganizer, form } from "#/db/celebration-schema";
 import { db } from "#/db/index";
 import {
 	type ActivityListItem,
@@ -16,6 +16,7 @@ import {
 	ACTIVITY_TIMELINE_STATUS_TONES,
 } from "#/lib/celebration/labels";
 import type { DeadlineKind } from "#/lib/celebration/state-machine";
+import { isSurveyOpen } from "#/lib/celebration/survey";
 
 type ActivityDetailRecord = ActivityListItem & {
 	organizers: string[];
@@ -34,6 +35,7 @@ type SerializedActivityDetail = Omit<
 	submissionDeadline: string;
 	infoSupplementDeadline: string;
 	createdAt: string;
+	surveys: { id: string; title: string }[];
 };
 
 const DEADLINE_LABELS = {
@@ -86,6 +88,23 @@ const getActivityDetail = createServerFn({
 			.map((row) => row.organizerName || row.organizerEmail)
 			.filter((name): name is string => Boolean(name));
 
+		// 开放中的问卷（用户在活动界面填写入口）
+		const surveyRows = await db
+			.select({
+				id: form.id,
+				title: form.title,
+				opensAt: form.opensAt,
+				closesAt: form.closesAt,
+			})
+			.from(form)
+			.where(
+				and(eq(form.activityId, data.activityId), eq(form.type, "survey")),
+			);
+		const surveyNow = new Date();
+		const surveys = surveyRows
+			.filter((s) => isSurveyOpen(s.opensAt, s.closesAt, surveyNow))
+			.map((s) => ({ id: s.id, title: s.title }));
+
 		return {
 			id: first.id,
 			title: first.title,
@@ -97,6 +116,7 @@ const getActivityDetail = createServerFn({
 			infoSupplementDeadline: first.infoSupplementDeadline.toISOString(),
 			createdAt: first.createdAt.toISOString(),
 			organizers,
+			surveys,
 		};
 	});
 
@@ -219,6 +239,27 @@ function ActivityDetailPage() {
 					)}
 				</aside>
 			</section>
+
+			{record.surveys.length > 0 && (
+				<section className="demo-panel mt-6">
+					<p className="island-kicker mb-3">Surveys</p>
+					<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
+						活动问卷
+					</h2>
+					<ul className="mt-3 grid gap-2">
+						{record.surveys.map((survey) => (
+							<li key={survey.id}>
+								<a
+									href={`/surveys/${survey.id}`}
+									className="text-[var(--lagoon-deep)]"
+								>
+									{survey.title} →
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
 		</main>
 	);
 }

@@ -16,6 +16,8 @@ import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SurveysSurveyIdRouteImport } from './routes/surveys.$surveyId'
+import { Route as OrganizerSurveysRouteImport } from './routes/organizer.surveys'
 import { Route as OrganizerProposalsRouteImport } from './routes/organizer.proposals'
 import { Route as OrganizerPaymentsRouteImport } from './routes/organizer.payments'
 import { Route as OrganizerManuscriptsRouteImport } from './routes/organizer.manuscripts'
@@ -27,6 +29,7 @@ import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-qu
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as ApiUploadsRouteImport } from './routes/api/uploads'
+import { Route as ApiSurveysRouteImport } from './routes/api/surveys'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
 import { Route as ProjectsProjectIdPaymentRouteImport } from './routes/projects_.$projectId.payment'
 import { Route as ProjectsProjectIdManuscriptRouteImport } from './routes/projects_.$projectId.manuscript'
@@ -37,6 +40,8 @@ import { Route as ApiProjectsPaymentCodeRouteImport } from './routes/api/project
 import { Route as ApiProjectsManuscriptsRouteImport } from './routes/api/projects/manuscripts'
 import { Route as ApiProjectsAuthorsRouteImport } from './routes/api/projects/authors'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
+import { Route as ApiOrganizerSurveysRouteImport } from './routes/api/organizer/surveys'
+import { Route as ApiOrganizerSurveyExportRouteImport } from './routes/api/organizer/survey-export'
 import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organizer/proposals'
 import { Route as ApiOrganizerPaymentsRouteImport } from './routes/api/organizer/payments'
 import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
@@ -80,6 +85,16 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SurveysSurveyIdRoute = SurveysSurveyIdRouteImport.update({
+  id: '/surveys/$surveyId',
+  path: '/surveys/$surveyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizerSurveysRoute = OrganizerSurveysRouteImport.update({
+  id: '/organizer/surveys',
+  path: '/organizer/surveys',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrganizerProposalsRoute = OrganizerProposalsRouteImport.update({
@@ -137,6 +152,11 @@ const ApiUploadsRoute = ApiUploadsRouteImport.update({
   path: '/api/uploads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSurveysRoute = ApiSurveysRouteImport.update({
+  id: '/api/surveys',
+  path: '/api/surveys',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
   id: '/activities_/$activityId',
   path: '/activities/$activityId',
@@ -191,6 +211,17 @@ const ApiPasswordResetRequestRoute = ApiPasswordResetRequestRouteImport.update({
   path: '/api/password-reset/request',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizerSurveysRoute = ApiOrganizerSurveysRouteImport.update({
+  id: '/api/organizer/surveys',
+  path: '/api/organizer/surveys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrganizerSurveyExportRoute =
+  ApiOrganizerSurveyExportRouteImport.update({
+    id: '/api/organizer/survey-export',
+    path: '/api/organizer/survey-export',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiOrganizerProposalsRoute = ApiOrganizerProposalsRouteImport.update({
   id: '/api/organizer/proposals',
   path: '/api/organizer/proposals',
@@ -248,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
+  '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
@@ -259,6 +291,8 @@ export interface FileRoutesByFullPath {
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
+  '/organizer/surveys': typeof OrganizerSurveysRoute
+  '/surveys/$surveyId': typeof SurveysSurveyIdRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
@@ -268,6 +302,8 @@ export interface FileRoutesByFullPath {
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
+  '/api/organizer/survey-export': typeof ApiOrganizerSurveyExportRoute
+  '/api/organizer/surveys': typeof ApiOrganizerSurveysRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
@@ -287,6 +323,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
+  '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
@@ -298,6 +335,8 @@ export interface FileRoutesByTo {
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
+  '/organizer/surveys': typeof OrganizerSurveysRoute
+  '/surveys/$surveyId': typeof SurveysSurveyIdRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
@@ -307,6 +346,8 @@ export interface FileRoutesByTo {
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
+  '/api/organizer/survey-export': typeof ApiOrganizerSurveyExportRoute
+  '/api/organizer/surveys': typeof ApiOrganizerSurveysRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
@@ -327,6 +368,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities_/$activityId': typeof ActivitiesActivityIdRouteWithChildren
+  '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
@@ -338,6 +380,8 @@ export interface FileRoutesById {
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
+  '/organizer/surveys': typeof OrganizerSurveysRoute
+  '/surveys/$surveyId': typeof SurveysSurveyIdRoute
   '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
@@ -347,6 +391,8 @@ export interface FileRoutesById {
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
+  '/api/organizer/survey-export': typeof ApiOrganizerSurveyExportRoute
+  '/api/organizer/surveys': typeof ApiOrganizerSurveysRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
@@ -368,6 +414,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
+    | '/api/surveys'
     | '/api/uploads'
     | '/demo/better-auth'
     | '/demo/drizzle'
@@ -379,6 +426,8 @@ export interface FileRouteTypes {
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
+    | '/organizer/surveys'
+    | '/surveys/$surveyId'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
@@ -388,6 +437,8 @@ export interface FileRouteTypes {
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
+    | '/api/organizer/survey-export'
+    | '/api/organizer/surveys'
     | '/api/password-reset/request'
     | '/api/projects/authors'
     | '/api/projects/manuscripts'
@@ -407,6 +458,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
+    | '/api/surveys'
     | '/api/uploads'
     | '/demo/better-auth'
     | '/demo/drizzle'
@@ -418,6 +470,8 @@ export interface FileRouteTypes {
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
+    | '/organizer/surveys'
+    | '/surveys/$surveyId'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
@@ -427,6 +481,8 @@ export interface FileRouteTypes {
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
+    | '/api/organizer/survey-export'
+    | '/api/organizer/surveys'
     | '/api/password-reset/request'
     | '/api/projects/authors'
     | '/api/projects/manuscripts'
@@ -446,6 +502,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/activities_/$activityId'
+    | '/api/surveys'
     | '/api/uploads'
     | '/demo/better-auth'
     | '/demo/drizzle'
@@ -457,6 +514,8 @@ export interface FileRouteTypes {
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
+    | '/organizer/surveys'
+    | '/surveys/$surveyId'
     | '/activities_/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
@@ -466,6 +525,8 @@ export interface FileRouteTypes {
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
+    | '/api/organizer/survey-export'
+    | '/api/organizer/surveys'
     | '/api/password-reset/request'
     | '/api/projects/authors'
     | '/api/projects/manuscripts'
@@ -486,6 +547,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRouteWithChildren
+  ApiSurveysRoute: typeof ApiSurveysRoute
   ApiUploadsRoute: typeof ApiUploadsRoute
   DemoBetterAuthRoute: typeof DemoBetterAuthRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
@@ -497,6 +559,8 @@ export interface RootRouteChildren {
   OrganizerManuscriptsRoute: typeof OrganizerManuscriptsRoute
   OrganizerPaymentsRoute: typeof OrganizerPaymentsRoute
   OrganizerProposalsRoute: typeof OrganizerProposalsRoute
+  OrganizerSurveysRoute: typeof OrganizerSurveysRoute
+  SurveysSurveyIdRoute: typeof SurveysSurveyIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiOrganizerActivitiesRoute: typeof ApiOrganizerActivitiesRoute
@@ -505,6 +569,8 @@ export interface RootRouteChildren {
   ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
   ApiOrganizerPaymentsRoute: typeof ApiOrganizerPaymentsRoute
   ApiOrganizerProposalsRoute: typeof ApiOrganizerProposalsRoute
+  ApiOrganizerSurveyExportRoute: typeof ApiOrganizerSurveyExportRoute
+  ApiOrganizerSurveysRoute: typeof ApiOrganizerSurveysRoute
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
   ApiProjectsAuthorsRoute: typeof ApiProjectsAuthorsRoute
   ApiProjectsManuscriptsRoute: typeof ApiProjectsManuscriptsRoute
@@ -565,6 +631,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/surveys/$surveyId': {
+      id: '/surveys/$surveyId'
+      path: '/surveys/$surveyId'
+      fullPath: '/surveys/$surveyId'
+      preLoaderRoute: typeof SurveysSurveyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organizer/surveys': {
+      id: '/organizer/surveys'
+      path: '/organizer/surveys'
+      fullPath: '/organizer/surveys'
+      preLoaderRoute: typeof OrganizerSurveysRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/organizer/proposals': {
@@ -644,6 +724,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUploadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/surveys': {
+      id: '/api/surveys'
+      path: '/api/surveys'
+      fullPath: '/api/surveys'
+      preLoaderRoute: typeof ApiSurveysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/activities_/$activityId': {
       id: '/activities_/$activityId'
       path: '/activities/$activityId'
@@ -712,6 +799,20 @@ declare module '@tanstack/react-router' {
       path: '/api/password-reset/request'
       fullPath: '/api/password-reset/request'
       preLoaderRoute: typeof ApiPasswordResetRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/organizer/surveys': {
+      id: '/api/organizer/surveys'
+      path: '/api/organizer/surveys'
+      fullPath: '/api/organizer/surveys'
+      preLoaderRoute: typeof ApiOrganizerSurveysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/organizer/survey-export': {
+      id: '/api/organizer/survey-export'
+      path: '/api/organizer/survey-export'
+      fullPath: '/api/organizer/survey-export'
+      preLoaderRoute: typeof ApiOrganizerSurveyExportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/organizer/proposals': {
@@ -800,6 +901,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ActivitiesActivityIdRoute: ActivitiesActivityIdRouteWithChildren,
+  ApiSurveysRoute: ApiSurveysRoute,
   ApiUploadsRoute: ApiUploadsRoute,
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
@@ -811,6 +913,8 @@ const rootRouteChildren: RootRouteChildren = {
   OrganizerManuscriptsRoute: OrganizerManuscriptsRoute,
   OrganizerPaymentsRoute: OrganizerPaymentsRoute,
   OrganizerProposalsRoute: OrganizerProposalsRoute,
+  OrganizerSurveysRoute: OrganizerSurveysRoute,
+  SurveysSurveyIdRoute: SurveysSurveyIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiOrganizerActivitiesRoute: ApiOrganizerActivitiesRoute,
@@ -819,6 +923,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
   ApiOrganizerPaymentsRoute: ApiOrganizerPaymentsRoute,
   ApiOrganizerProposalsRoute: ApiOrganizerProposalsRoute,
+  ApiOrganizerSurveyExportRoute: ApiOrganizerSurveyExportRoute,
+  ApiOrganizerSurveysRoute: ApiOrganizerSurveysRoute,
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
   ApiProjectsAuthorsRoute: ApiProjectsAuthorsRoute,
   ApiProjectsManuscriptsRoute: ApiProjectsManuscriptsRoute,

@@ -98,17 +98,13 @@ export function validateFormSchema(
 	return errors;
 }
 
-export function validateDynamicFormAnswers(
+// 校验「纯题目」作答（不含系统强制字段）：schema 完整性 + 每题必填 / 类型。
+// 立项（含系统字段）与问卷（无系统字段）共用此核心（DRY）。
+export function validateSchemaAnswers(
 	schema: FormQuestion[],
 	answers: Partial<Record<string, unknown>>,
 ): FormValidationErrors {
 	const errors = validateFormSchema(schema);
-
-	for (const field of SYSTEM_FORM_FIELDS) {
-		if (!isNonEmptyString(answers[field.id])) {
-			errors[field.id] = `${field.label}为必填项。`;
-		}
-	}
 
 	for (const question of schema) {
 		const value = answers[question.id];
@@ -123,6 +119,21 @@ export function validateDynamicFormAnswers(
 		const typeError = validateQuestionValue(question, value);
 		if (typeError) {
 			errors[question.id] = typeError;
+		}
+	}
+
+	return errors;
+}
+
+export function validateDynamicFormAnswers(
+	schema: FormQuestion[],
+	answers: Partial<Record<string, unknown>>,
+): FormValidationErrors {
+	const errors = validateSchemaAnswers(schema, answers);
+
+	for (const field of SYSTEM_FORM_FIELDS) {
+		if (!isNonEmptyString(answers[field.id])) {
+			errors[field.id] = `${field.label}为必填项。`;
 		}
 	}
 
