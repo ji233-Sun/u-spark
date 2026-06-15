@@ -26,8 +26,10 @@ import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as ApiUploadsRouteImport } from './routes/api/uploads'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
 import { Route as ProjectsProjectIdManuscriptRouteImport } from './routes/projects_.$projectId.manuscript'
+import { Route as ProjectsProjectIdAuthorsRouteImport } from './routes/projects_.$projectId.authors'
 import { Route as ApiProjectsProposalsRouteImport } from './routes/api/projects/proposals'
 import { Route as ApiProjectsManuscriptsRouteImport } from './routes/api/projects/manuscripts'
+import { Route as ApiProjectsAuthorsRouteImport } from './routes/api/projects/authors'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
 import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organizer/proposals'
 import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
@@ -121,6 +123,12 @@ const ProjectsProjectIdManuscriptRoute =
     path: '/projects/$projectId/manuscript',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ProjectsProjectIdAuthorsRoute =
+  ProjectsProjectIdAuthorsRouteImport.update({
+    id: '/projects_/$projectId/authors',
+    path: '/projects/$projectId/authors',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiProjectsProposalsRoute = ApiProjectsProposalsRouteImport.update({
   id: '/api/projects/proposals',
   path: '/api/projects/proposals',
@@ -129,6 +137,11 @@ const ApiProjectsProposalsRoute = ApiProjectsProposalsRouteImport.update({
 const ApiProjectsManuscriptsRoute = ApiProjectsManuscriptsRouteImport.update({
   id: '/api/projects/manuscripts',
   path: '/api/projects/manuscripts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsAuthorsRoute = ApiProjectsAuthorsRouteImport.update({
+  id: '/api/projects/authors',
+  path: '/api/projects/authors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPasswordResetRequestRoute = ApiPasswordResetRequestRouteImport.update({
@@ -186,8 +199,10 @@ export interface FileRoutesByFullPath {
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
+  '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
+  '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
 }
 export interface FileRoutesByTo {
@@ -213,8 +228,10 @@ export interface FileRoutesByTo {
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
+  '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
+  '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
 }
 export interface FileRoutesById {
@@ -241,8 +258,10 @@ export interface FileRoutesById {
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
+  '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
+  '/projects_/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects_/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
 }
 export interface FileRouteTypes {
@@ -270,8 +289,10 @@ export interface FileRouteTypes {
     | '/api/organizer/manuscripts'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
+    | '/api/projects/authors'
     | '/api/projects/manuscripts'
     | '/api/projects/proposals'
+    | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -297,8 +318,10 @@ export interface FileRouteTypes {
     | '/api/organizer/manuscripts'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
+    | '/api/projects/authors'
     | '/api/projects/manuscripts'
     | '/api/projects/proposals'
+    | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
   id:
     | '__root__'
@@ -324,8 +347,10 @@ export interface FileRouteTypes {
     | '/api/organizer/manuscripts'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
+    | '/api/projects/authors'
     | '/api/projects/manuscripts'
     | '/api/projects/proposals'
+    | '/projects_/$projectId/authors'
     | '/projects_/$projectId/manuscript'
   fileRoutesById: FileRoutesById
 }
@@ -351,8 +376,10 @@ export interface RootRouteChildren {
   ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
   ApiOrganizerProposalsRoute: typeof ApiOrganizerProposalsRoute
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
+  ApiProjectsAuthorsRoute: typeof ApiProjectsAuthorsRoute
   ApiProjectsManuscriptsRoute: typeof ApiProjectsManuscriptsRoute
   ApiProjectsProposalsRoute: typeof ApiProjectsProposalsRoute
+  ProjectsProjectIdAuthorsRoute: typeof ProjectsProjectIdAuthorsRoute
   ProjectsProjectIdManuscriptRoute: typeof ProjectsProjectIdManuscriptRoute
 }
 
@@ -477,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdManuscriptRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects_/$projectId/authors': {
+      id: '/projects_/$projectId/authors'
+      path: '/projects/$projectId/authors'
+      fullPath: '/projects/$projectId/authors'
+      preLoaderRoute: typeof ProjectsProjectIdAuthorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/proposals': {
       id: '/api/projects/proposals'
       path: '/api/projects/proposals'
@@ -489,6 +523,13 @@ declare module '@tanstack/react-router' {
       path: '/api/projects/manuscripts'
       fullPath: '/api/projects/manuscripts'
       preLoaderRoute: typeof ApiProjectsManuscriptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects/authors': {
+      id: '/api/projects/authors'
+      path: '/api/projects/authors'
+      fullPath: '/api/projects/authors'
+      preLoaderRoute: typeof ApiProjectsAuthorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/password-reset/request': {
@@ -569,8 +610,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
   ApiOrganizerProposalsRoute: ApiOrganizerProposalsRoute,
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
+  ApiProjectsAuthorsRoute: ApiProjectsAuthorsRoute,
   ApiProjectsManuscriptsRoute: ApiProjectsManuscriptsRoute,
   ApiProjectsProposalsRoute: ApiProjectsProposalsRoute,
+  ProjectsProjectIdAuthorsRoute: ProjectsProjectIdAuthorsRoute,
   ProjectsProjectIdManuscriptRoute: ProjectsProjectIdManuscriptRoute,
 }
 export const routeTree = rootRouteImport

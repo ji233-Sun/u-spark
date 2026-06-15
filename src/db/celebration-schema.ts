@@ -179,7 +179,9 @@ export const projectAuthor = pgTable(
 			.notNull()
 			.references(() => project.id, { onDelete: "cascade" }),
 		userId: text("user_id").references(() => user.id),
-		displayName: text("display_name").notNull(),
+		displayName: text("display_name").notNull(), // 昵称
+		bilibiliUid: text("bilibili_uid"), // B站 UID（选填）
+		duty: text("duty"), // 职能（如：导演 / 剪辑 / 后期，选填）
 		// 项目级单一收款负责人（T01 ②：稿酬全额打给此人，线下分账）
 		isPayee: boolean("is_payee").notNull().default(false),
 		createdAt: createdAt(),

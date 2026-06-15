@@ -149,6 +149,15 @@ function MyProposalsPage() {
 														: "查看稿件"}
 												</Link>
 											)}
+											{MANUSCRIPT_STAGES.includes(projectStatus) && (
+												<Link
+													to="/projects/$projectId/authors"
+													params={{ projectId: proposal.id }}
+													className="demo-button demo-button-secondary no-underline"
+												>
+													作者 / 收件
+												</Link>
+											)}
 											{canRestartProposal(projectStatus) && (
 												<Link
 													to="/activities/$activityId/proposal"
