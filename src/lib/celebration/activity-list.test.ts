@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	type ActivityListItem,
+	activityParticipationState,
 	filterActivityListRows,
 	parseActivityTimelineFilter,
 	prepareActivityList,
@@ -105,5 +106,32 @@ describe("活动列表排序与筛选", () => {
 				(item) => item.id,
 			),
 		).toEqual(["new", "middle", "old"]);
+	});
+
+	it("参与入口仅在活动进行中且仍处于立项 DDL 阶段启用", () => {
+		expect(
+			activityParticipationState({
+				timelineStatus: "ongoing",
+				nextDeadlineKind: "proposal",
+			}),
+		).toEqual({ enabled: true, reason: "进入立项流程" });
+		expect(
+			activityParticipationState({
+				timelineStatus: "not_started",
+				nextDeadlineKind: "proposal",
+			}),
+		).toEqual({ enabled: false, reason: "活动尚未开始" });
+		expect(
+			activityParticipationState({
+				timelineStatus: "ongoing",
+				nextDeadlineKind: "submission",
+			}),
+		).toEqual({ enabled: false, reason: "立项入口已关闭" });
+		expect(
+			activityParticipationState({
+				timelineStatus: "ended",
+				nextDeadlineKind: null,
+			}),
+		).toEqual({ enabled: false, reason: "活动已结束" });
 	});
 });

@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
+import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -72,6 +73,11 @@ const DemoBetterAuthRoute = DemoBetterAuthRouteImport.update({
   path: '/demo/better-auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
+  id: '/activities_/$activityId',
+  path: '/activities/$activityId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPasswordResetRequestRoute = ApiPasswordResetRequestRouteImport.update({
   id: '/api/password-reset/request',
   path: '/api/password-reset/request',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/activities/$activityId': typeof ActivitiesActivityIdRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/activities/$activityId': typeof ActivitiesActivityIdRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/activities_/$activityId': typeof ActivitiesActivityIdRoute
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
+    | '/activities/$activityId'
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
+    | '/activities/$activityId'
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
+    | '/activities_/$activityId'
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRoute
   DemoBetterAuthRoute: typeof DemoBetterAuthRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoBetterAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activities_/$activityId': {
+      id: '/activities_/$activityId'
+      path: '/activities/$activityId'
+      fullPath: '/activities/$activityId'
+      preLoaderRoute: typeof ActivitiesActivityIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/password-reset/request': {
       id: '/api/password-reset/request'
       path: '/api/password-reset/request'
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ActivitiesActivityIdRoute: ActivitiesActivityIdRoute,
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,

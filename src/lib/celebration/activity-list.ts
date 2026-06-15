@@ -31,6 +31,11 @@ export type ActivityListRow = ActivityListItem & {
 	endsAt: Date;
 };
 
+export type ActivityParticipationState = {
+	enabled: boolean;
+	reason: string;
+};
+
 export function parseActivityTimelineFilter(
 	value: unknown,
 ): ActivityTimelineFilter {
@@ -82,4 +87,19 @@ export function prepareActivityList(
 		toActivityListRows(sortActivitiesByCreatedAt(activities), now),
 		filter,
 	);
+}
+
+export function activityParticipationState(
+	row: Pick<ActivityListRow, "timelineStatus" | "nextDeadlineKind">,
+): ActivityParticipationState {
+	if (row.timelineStatus === "not_started") {
+		return { enabled: false, reason: "活动尚未开始" };
+	}
+	if (row.timelineStatus === "ended") {
+		return { enabled: false, reason: "活动已结束" };
+	}
+	if (row.nextDeadlineKind !== "proposal") {
+		return { enabled: false, reason: "立项入口已关闭" };
+	}
+	return { enabled: true, reason: "进入立项流程" };
 }

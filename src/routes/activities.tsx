@@ -161,7 +161,13 @@ function ActivitiesPage() {
 										</span>
 									</div>
 									<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
-										{row.title}
+										<Link
+											to="/activities/$activityId"
+											params={{ activityId: row.id }}
+											className="text-[var(--sea-ink)] no-underline hover:text-[var(--lagoon-deep)]"
+										>
+											{row.title}
+										</Link>
 									</h2>
 									{row.description && (
 										<p className="demo-muted mt-2 line-clamp-2 text-sm">
@@ -186,6 +192,15 @@ function ActivitiesPage() {
 										value={formatCountdown(row.millisecondsUntilNextDeadline)}
 									/>
 								</div>
+							</div>
+							<div className="mt-4 flex justify-end">
+								<Link
+									to="/activities/$activityId"
+									params={{ activityId: row.id }}
+									className="demo-button demo-button-secondary no-underline"
+								>
+									查看详情
+								</Link>
 							</div>
 						</article>
 					))}
