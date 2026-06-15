@@ -1,4 +1,8 @@
-import type { ManuscriptStatus, ProjectStatus } from "./state-machine.ts";
+import type {
+	ActivityTimelineStatus,
+	ManuscriptStatus,
+	ProjectStatus,
+} from "./state-machine.ts";
 
 // 状态展示词表（T07 #7）：状态 → 中文标签 + 语义色调（tone）。纯映射，可单测。
 export type Tone = "neutral" | "info" | "success" | "warning" | "danger";
@@ -40,3 +44,15 @@ export const MANUSCRIPT_STATUS_TONES = {
 	rejected: "danger",
 	revision_requested: "warning",
 } satisfies Record<ManuscriptStatus, Tone>;
+
+export const ACTIVITY_TIMELINE_STATUS_LABELS = {
+	ongoing: "进行中",
+	not_started: "待开始",
+	ended: "已结束",
+} satisfies Record<ActivityTimelineStatus, string>;
+
+export const ACTIVITY_TIMELINE_STATUS_TONES = {
+	ongoing: "success",
+	not_started: "info",
+	ended: "neutral",
+} satisfies Record<ActivityTimelineStatus, Tone>;
