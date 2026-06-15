@@ -9,7 +9,7 @@ const TEMPLATES = {
 	// ── 认证类 ──
 	verify_otp: (d) => ({
 		subject: "【U-Spark】邮箱验证码",
-		body: `你的验证码是 ${d.code}，10 分钟内有效。若非本人操作请忽略。`,
+		body: `你的验证码是 ${d.code}，5 分钟内有效。若非本人操作请忽略。`,
 	}),
 	reset_password: (d) => ({
 		subject: "【U-Spark】重置密码",
@@ -17,7 +17,7 @@ const TEMPLATES = {
 	}),
 	magic_link: (d) => ({
 		subject: "【U-Spark】登录链接",
-		body: `点击登录（10 分钟内有效）：${d.url}`,
+		body: `点击登录（5 分钟内有效）：${d.url}`,
 	}),
 	// ── 状态流转类（对齐 state-machine 的 template key）──
 	proposal_submitted: (d) => ({

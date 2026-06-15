@@ -1,234 +1,462 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { authClient } from '#/lib/auth-client'
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { authClient } from "#/lib/auth-client";
+import {
+	isEmailIdentifier,
+	MAGIC_LINK_SENT_MESSAGE,
+	PASSWORD_LOGIN_ERROR,
+} from "#/lib/auth-policy";
 
-export const Route = createFileRoute('/demo/better-auth')({
-  component: BetterAuthDemo,
-})
+export const Route = createFileRoute("/demo/better-auth")({
+	component: BetterAuthDemo,
+});
+
+type AuthMode = "password" | "magic" | "signup";
+
+function readableAuthError(message: string | undefined): string {
+	if (!message) return "操作失败，请稍后重试。";
+	if (message.includes("USERNAME_IS_ALREADY_TAKEN")) {
+		return "用户名已被占用，请换一个。";
+	}
+	if (
+		message.includes("USER_ALREADY_EXISTS") ||
+		message.includes("already exists")
+	) {
+		return "邮箱已注册，请直接登录或换一个邮箱。";
+	}
+	if (message.includes("INVALID_OTP") || message.includes("OTP")) {
+		return "验证码无效或已过期，请重新获取。";
+	}
+	if (message.includes("USERNAME_TOO_SHORT")) {
+		return "用户名至少需要 3 个字符。";
+	}
+	if (message.includes("USERNAME_TOO_LONG")) {
+		return "用户名最多 30 个字符。";
+	}
+	if (message.includes("PASSWORD_TOO_SHORT")) {
+		return "密码至少需要 8 位。";
+	}
+	return message;
+}
 
 function BetterAuthDemo() {
-  const { data: session, isPending } = authClient.useSession()
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+	const { data: session, isPending } = authClient.useSession();
+	const [mode, setMode] = useState<AuthMode>("password");
+	const [identifier, setIdentifier] = useState("");
+	const [magicEmail, setMagicEmail] = useState("");
+	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [otp, setOtp] = useState("");
+	const [needsOtp, setNeedsOtp] = useState(false);
+	const [message, setMessage] = useState("");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
-  if (isPending) {
-    return (
-      <main className="demo-page demo-center">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-200 border-t-neutral-900 dark:border-neutral-800 dark:border-t-neutral-100" />
-      </main>
-    )
-  }
+	if (isPending) {
+		return (
+			<main className="demo-page demo-center">
+				<div className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-200 border-t-neutral-900 dark:border-neutral-800 dark:border-t-neutral-100" />
+			</main>
+		);
+	}
 
-  if (session?.user) {
-    return (
-      <main className="demo-page demo-center">
-        <section className="demo-panel w-full max-w-md space-y-6">
-          <div className="space-y-1.5">
-            <p className="island-kicker mb-2">Better Auth</p>
-            <h1 className="demo-title">Welcome back</h1>
-            <p className="demo-muted text-sm">
-              You're signed in as {session.user.email}
-            </p>
-          </div>
+	if (session?.user) {
+		return (
+			<main className="demo-page demo-center">
+				<section className="demo-panel w-full max-w-md space-y-6">
+					<div className="space-y-1.5">
+						<p className="island-kicker mb-2">Better Auth</p>
+						<h1 className="demo-title">Welcome back</h1>
+						<p className="demo-muted text-sm">
+							You are signed in as {session.user.email}
+						</p>
+					</div>
 
-          <div className="flex items-center gap-3">
-            {session.user.image ? (
-              <img src={session.user.image} alt="" className="h-10 w-10" />
-            ) : (
-              <div className="h-10 w-10 bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center">
-                <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                  {session.user.name?.charAt(0).toUpperCase() || 'U'}
-                </span>
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">
-                {session.user.name}
-              </p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
-                {session.user.email}
-              </p>
-            </div>
-          </div>
+					<div className="flex items-center gap-3">
+						{session.user.image ? (
+							<img src={session.user.image} alt="" className="h-10 w-10" />
+						) : (
+							<div className="flex h-10 w-10 items-center justify-center bg-neutral-200 dark:bg-neutral-800">
+								<span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+									{session.user.name?.charAt(0).toUpperCase() || "U"}
+								</span>
+							</div>
+						)}
+						<div className="min-w-0 flex-1">
+							<p className="truncate text-sm font-medium">
+								{session.user.name}
+							</p>
+							<p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+								{session.user.email}
+							</p>
+						</div>
+					</div>
 
-          <button
-            onClick={() => {
-              void authClient.signOut()
-            }}
-            className="demo-button demo-button-secondary w-full"
-          >
-            Sign out
-          </button>
+					<button
+						type="button"
+						onClick={() => {
+							void authClient.signOut();
+						}}
+						className="demo-button demo-button-secondary w-full"
+					>
+						Sign out
+					</button>
+				</section>
+			</main>
+		);
+	}
 
-          <p className="demo-muted text-center text-xs">
-            Built with{' '}
-            <a
-              href="https://better-auth.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium"
-            >
-              BETTER-AUTH
-            </a>
-            .
-          </p>
-        </section>
-      </main>
-    )
-  }
+	const resetFeedback = () => {
+		setError("");
+		setMessage("");
+	};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+	const switchMode = (nextMode: AuthMode) => {
+		setMode(nextMode);
+		setNeedsOtp(false);
+		setOtp("");
+		resetFeedback();
+	};
 
-    try {
-      if (isSignUp) {
-        const result = await authClient.signUp.email({
-          email,
-          password,
-          name,
-        })
-        if (result.error) {
-          setError(result.error.message || 'Sign up failed')
-        }
-      } else {
-        const result = await authClient.signIn.email({
-          email,
-          password,
-        })
-        if (result.error) {
-          setError(result.error.message || 'Sign in failed')
-        }
-      }
-    } catch (err) {
-      setError('An unexpected error occurred')
-    } finally {
-      setLoading(false)
-    }
-  }
+	const handlePasswordLogin = async (e: React.FormEvent) => {
+		e.preventDefault();
+		resetFeedback();
+		setLoading(true);
 
-  return (
-    <main className="demo-page demo-center">
-      <section className="demo-panel w-full max-w-md">
-        <p className="island-kicker mb-2">Better Auth</p>
-        <h1 className="demo-title">
-          {isSignUp ? 'Create an account' : 'Sign in'}
-        </h1>
-        <p className="demo-muted mt-2 mb-6 text-sm">
-          {isSignUp
-            ? 'Enter your information to create an account'
-            : 'Enter your email below to login to your account'}
-        </p>
+		try {
+			const login = isEmailIdentifier(identifier)
+				? await authClient.signIn.email({
+						email: identifier,
+						password,
+					})
+				: await authClient.signIn.username({
+						username: identifier,
+						password,
+					});
 
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          {isSignUp && (
-            <div className="grid gap-2">
-              <label
-                htmlFor="name"
-                className="text-sm font-medium leading-none"
-              >
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="demo-input"
-                required
-              />
-            </div>
-          )}
+			if (login.error) {
+				setError(PASSWORD_LOGIN_ERROR);
+			}
+		} catch {
+			setError(PASSWORD_LOGIN_ERROR);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-          <div className="grid gap-2">
-            <label htmlFor="email" className="text-sm font-medium leading-none">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="demo-input"
-              required
-            />
-          </div>
+	const handleMagicLink = async (e: React.FormEvent) => {
+		e.preventDefault();
+		resetFeedback();
+		setLoading(true);
 
-          <div className="grid gap-2">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium leading-none"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="demo-input"
-              required
-              minLength={8}
-            />
-          </div>
+		try {
+			await authClient.signIn.magicLink({
+				email: magicEmail,
+				callbackURL: "/demo/better-auth",
+				errorCallbackURL: "/demo/better-auth",
+			});
+			setMessage(MAGIC_LINK_SENT_MESSAGE);
+		} catch {
+			setMessage(MAGIC_LINK_SENT_MESSAGE);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-          {error && (
-            <div className="demo-alert demo-alert-danger">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
-          )}
+	const handleSignUp = async (e: React.FormEvent) => {
+		e.preventDefault();
+		resetFeedback();
+		setLoading(true);
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="demo-button w-full"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-white dark:border-neutral-600 dark:border-t-neutral-900" />
-                <span>Please wait</span>
-              </span>
-            ) : isSignUp ? (
-              'Create account'
-            ) : (
-              'Sign in'
-            )}
-          </button>
-        </form>
+		try {
+			if (password !== confirmPassword) {
+				setError("两次输入的密码不一致。");
+				return;
+			}
 
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={() => {
-              setIsSignUp(!isSignUp)
-              setError('')
-            }}
-            className="demo-muted text-sm transition-colors hover:text-[var(--sea-ink)]"
-          >
-            {isSignUp
-              ? 'Already have an account? Sign in'
-              : "Don't have an account? Sign up"}
-          </button>
-        </div>
+			const availability = await authClient.isUsernameAvailable({ username });
+			if (availability.error) {
+				setError(readableAuthError(availability.error.message));
+				return;
+			}
+			if (!availability.data?.available) {
+				setError("用户名已被占用，请换一个。");
+				return;
+			}
 
-        <p className="demo-muted mt-6 text-center text-xs">
-          Built with{' '}
-          <a
-            href="https://better-auth.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium"
-          >
-            BETTER-AUTH
-          </a>
-          .
-        </p>
-      </section>
-    </main>
-  )
+			const result = await authClient.signUp.email({
+				email,
+				password,
+				name: username,
+				username,
+				displayUsername: username,
+				callbackURL: "/demo/better-auth",
+			});
+
+			if (result.error) {
+				setError(readableAuthError(result.error.message));
+				return;
+			}
+
+			setNeedsOtp(true);
+			setMessage("验证码已发送，请在 5 分钟内完成验证。");
+		} catch (err) {
+			setError(
+				err instanceof Error ? readableAuthError(err.message) : "注册失败。",
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleVerifyOtp = async (e: React.FormEvent) => {
+		e.preventDefault();
+		resetFeedback();
+		setLoading(true);
+
+		try {
+			const result = await authClient.emailOtp.verifyEmail({
+				email,
+				otp,
+			});
+			if (result.error) {
+				setError(readableAuthError(result.error.message));
+				return;
+			}
+			setMessage("邮箱验证成功，正在进入账号。");
+		} catch (err) {
+			setError(
+				err instanceof Error
+					? readableAuthError(err.message)
+					: "验证码验证失败。",
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<main className="demo-page demo-center">
+			<section className="demo-panel w-full max-w-md">
+				<p className="island-kicker mb-2">Better Auth</p>
+				<h1 className="demo-title">
+					{mode === "signup" ? "Create an account" : "Sign in"}
+				</h1>
+
+				<div className="mt-6 grid grid-cols-3 gap-2 rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] p-1">
+					<button
+						type="button"
+						onClick={() => switchMode("password")}
+						className={`demo-button px-2 ${mode === "password" ? "" : "demo-button-secondary"}`}
+					>
+						密码
+					</button>
+					<button
+						type="button"
+						onClick={() => switchMode("magic")}
+						className={`demo-button px-2 ${mode === "magic" ? "" : "demo-button-secondary"}`}
+					>
+						链接
+					</button>
+					<button
+						type="button"
+						onClick={() => switchMode("signup")}
+						className={`demo-button px-2 ${mode === "signup" ? "" : "demo-button-secondary"}`}
+					>
+						注册
+					</button>
+				</div>
+
+				{mode === "password" && (
+					<form onSubmit={handlePasswordLogin} className="mt-6 grid gap-4">
+						<div className="grid gap-2">
+							<label htmlFor="identifier" className="text-sm font-medium">
+								用户名或邮箱
+							</label>
+							<input
+								id="identifier"
+								type="text"
+								value={identifier}
+								onChange={(e) => setIdentifier(e.target.value)}
+								className="demo-input"
+								required
+							/>
+						</div>
+
+						<div className="grid gap-2">
+							<label htmlFor="password" className="text-sm font-medium">
+								密码
+							</label>
+							<input
+								id="password"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								className="demo-input"
+								required
+								minLength={8}
+							/>
+						</div>
+
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="登录" />
+					</form>
+				)}
+
+				{mode === "magic" && (
+					<form onSubmit={handleMagicLink} className="mt-6 grid gap-4">
+						<div className="grid gap-2">
+							<label htmlFor="magicEmail" className="text-sm font-medium">
+								邮箱
+							</label>
+							<input
+								id="magicEmail"
+								type="email"
+								value={magicEmail}
+								onChange={(e) => setMagicEmail(e.target.value)}
+								className="demo-input"
+								required
+							/>
+						</div>
+
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="发送登录链接" />
+					</form>
+				)}
+
+				{mode === "signup" && !needsOtp && (
+					<form onSubmit={handleSignUp} className="mt-6 grid gap-4">
+						<div className="grid gap-2">
+							<label htmlFor="username" className="text-sm font-medium">
+								用户名
+							</label>
+							<input
+								id="username"
+								type="text"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
+								className="demo-input"
+								required
+								minLength={3}
+								maxLength={30}
+								autoComplete="username"
+							/>
+						</div>
+
+						<div className="grid gap-2">
+							<label htmlFor="email" className="text-sm font-medium">
+								邮箱
+							</label>
+							<input
+								id="email"
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								className="demo-input"
+								required
+								autoComplete="email"
+							/>
+						</div>
+
+						<div className="grid gap-2">
+							<label htmlFor="newPassword" className="text-sm font-medium">
+								密码
+							</label>
+							<input
+								id="newPassword"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								className="demo-input"
+								required
+								minLength={8}
+								autoComplete="new-password"
+							/>
+						</div>
+
+						<div className="grid gap-2">
+							<label htmlFor="confirmPassword" className="text-sm font-medium">
+								确认密码
+							</label>
+							<input
+								id="confirmPassword"
+								type="password"
+								value={confirmPassword}
+								onChange={(e) => setConfirmPassword(e.target.value)}
+								className="demo-input"
+								required
+								minLength={8}
+								autoComplete="new-password"
+							/>
+						</div>
+
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="创建账号并发送验证码" />
+					</form>
+				)}
+
+				{mode === "signup" && needsOtp && (
+					<form onSubmit={handleVerifyOtp} className="mt-6 grid gap-4">
+						<div className="demo-alert">
+							<p className="text-sm">验证码已发送至 {email}。</p>
+						</div>
+						<div className="grid gap-2">
+							<label htmlFor="otp" className="text-sm font-medium">
+								验证码
+							</label>
+							<input
+								id="otp"
+								type="text"
+								inputMode="numeric"
+								value={otp}
+								onChange={(e) => setOtp(e.target.value)}
+								className="demo-input"
+								required
+								minLength={6}
+								maxLength={6}
+							/>
+						</div>
+
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="验证并登录" />
+					</form>
+				)}
+			</section>
+		</main>
+	);
+}
+
+function Feedback({ error, message }: { error: string; message: string }) {
+	if (error) {
+		return (
+			<div className="demo-alert demo-alert-danger">
+				<p className="text-sm text-red-600">{error}</p>
+			</div>
+		);
+	}
+	if (message) {
+		return (
+			<div className="demo-alert">
+				<p className="text-sm">{message}</p>
+			</div>
+		);
+	}
+	return null;
+}
+
+function SubmitButton({ loading, label }: { loading: boolean; label: string }) {
+	return (
+		<button type="submit" disabled={loading} className="demo-button w-full">
+			{loading ? (
+				<span className="flex items-center justify-center gap-2">
+					<span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-white dark:border-neutral-600 dark:border-t-neutral-900" />
+					<span>Please wait</span>
+				</span>
+			) : (
+				label
+			)}
+		</button>
+	);
 }
