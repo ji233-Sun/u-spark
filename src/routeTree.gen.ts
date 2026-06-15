@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrganizerProposalsRouteImport } from './routes/organizer.proposals'
 import { Route as OrganizerPaymentsRouteImport } from './routes/organizer.payments'
 import { Route as OrganizerManuscriptsRouteImport } from './routes/organizer.manuscripts'
+import { Route as OrganizerActivitiesRouteImport } from './routes/organizer.activities'
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as FilesSplatRouteImport } from './routes/files.$'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -29,6 +30,7 @@ import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$
 import { Route as ProjectsProjectIdPaymentRouteImport } from './routes/projects_.$projectId.payment'
 import { Route as ProjectsProjectIdManuscriptRouteImport } from './routes/projects_.$projectId.manuscript'
 import { Route as ProjectsProjectIdAuthorsRouteImport } from './routes/projects_.$projectId.authors'
+import { Route as OrganizerActivitiesActivityIdRouteImport } from './routes/organizer.activities_.$activityId'
 import { Route as ApiProjectsProposalsRouteImport } from './routes/api/projects/proposals'
 import { Route as ApiProjectsPaymentCodeRouteImport } from './routes/api/projects/payment-code'
 import { Route as ApiProjectsManuscriptsRouteImport } from './routes/api/projects/manuscripts'
@@ -37,6 +39,8 @@ import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/passwo
 import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organizer/proposals'
 import { Route as ApiOrganizerPaymentsRouteImport } from './routes/api/organizer/payments'
 import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
+import { Route as ApiOrganizerActivityConfigRouteImport } from './routes/api/organizer/activity-config'
+import { Route as ApiOrganizerActivitiesRouteImport } from './routes/api/organizer/activities'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ActivitiesActivityIdProposalRouteImport } from './routes/activities_.$activityId.proposal'
@@ -89,6 +93,11 @@ const OrganizerPaymentsRoute = OrganizerPaymentsRouteImport.update({
 const OrganizerManuscriptsRoute = OrganizerManuscriptsRouteImport.update({
   id: '/organizer/manuscripts',
   path: '/organizer/manuscripts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizerActivitiesRoute = OrganizerActivitiesRouteImport.update({
+  id: '/organizer/activities',
+  path: '/organizer/activities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyProposalsRoute = MyProposalsRouteImport.update({
@@ -144,6 +153,12 @@ const ProjectsProjectIdAuthorsRoute =
     path: '/projects/$projectId/authors',
     getParentRoute: () => rootRouteImport,
   } as any)
+const OrganizerActivitiesActivityIdRoute =
+  OrganizerActivitiesActivityIdRouteImport.update({
+    id: '/organizer/activities_/$activityId',
+    path: '/organizer/activities/$activityId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiProjectsProposalsRoute = ApiProjectsProposalsRouteImport.update({
   id: '/api/projects/proposals',
   path: '/api/projects/proposals',
@@ -184,6 +199,17 @@ const ApiOrganizerManuscriptsRoute = ApiOrganizerManuscriptsRouteImport.update({
   path: '/api/organizer/manuscripts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizerActivityConfigRoute =
+  ApiOrganizerActivityConfigRouteImport.update({
+    id: '/api/organizer/activity-config',
+    path: '/api/organizer/activity-config',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiOrganizerActivitiesRoute = ApiOrganizerActivitiesRouteImport.update({
+  id: '/api/organizer/activities',
+  path: '/api/organizer/activities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMyProposalsRoute = ApiMyProposalsRouteImport.update({
   id: '/api/my/proposals',
   path: '/api/my/proposals',
@@ -216,12 +242,15 @@ export interface FileRoutesByFullPath {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
+  '/organizer/activities': typeof OrganizerActivitiesRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
+  '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
+  '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
@@ -230,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
   '/api/projects/payment-code': typeof ApiProjectsPaymentCodeRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
+  '/organizer/activities/$activityId': typeof OrganizerActivitiesActivityIdRoute
   '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
   '/projects/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
@@ -249,12 +279,15 @@ export interface FileRoutesByTo {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
+  '/organizer/activities': typeof OrganizerActivitiesRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
+  '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
+  '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
@@ -263,6 +296,7 @@ export interface FileRoutesByTo {
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
   '/api/projects/payment-code': typeof ApiProjectsPaymentCodeRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
+  '/organizer/activities/$activityId': typeof OrganizerActivitiesActivityIdRoute
   '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
   '/projects/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
@@ -283,12 +317,15 @@ export interface FileRoutesById {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
+  '/organizer/activities': typeof OrganizerActivitiesRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
+  '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
+  '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
@@ -297,6 +334,7 @@ export interface FileRoutesById {
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
   '/api/projects/payment-code': typeof ApiProjectsPaymentCodeRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
+  '/organizer/activities_/$activityId': typeof OrganizerActivitiesActivityIdRoute
   '/projects_/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects_/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
   '/projects_/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
@@ -318,12 +356,15 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
+    | '/organizer/activities'
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
+    | '/api/organizer/activities'
+    | '/api/organizer/activity-config'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
@@ -332,6 +373,7 @@ export interface FileRouteTypes {
     | '/api/projects/manuscripts'
     | '/api/projects/payment-code'
     | '/api/projects/proposals'
+    | '/organizer/activities/$activityId'
     | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
     | '/projects/$projectId/payment'
@@ -351,12 +393,15 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
+    | '/organizer/activities'
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
+    | '/api/organizer/activities'
+    | '/api/organizer/activity-config'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
@@ -365,6 +410,7 @@ export interface FileRouteTypes {
     | '/api/projects/manuscripts'
     | '/api/projects/payment-code'
     | '/api/projects/proposals'
+    | '/organizer/activities/$activityId'
     | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
     | '/projects/$projectId/payment'
@@ -384,12 +430,15 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
+    | '/organizer/activities'
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
     | '/activities_/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
+    | '/api/organizer/activities'
+    | '/api/organizer/activity-config'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
@@ -398,6 +447,7 @@ export interface FileRouteTypes {
     | '/api/projects/manuscripts'
     | '/api/projects/payment-code'
     | '/api/projects/proposals'
+    | '/organizer/activities_/$activityId'
     | '/projects_/$projectId/authors'
     | '/projects_/$projectId/manuscript'
     | '/projects_/$projectId/payment'
@@ -418,11 +468,14 @@ export interface RootRouteChildren {
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   FilesSplatRoute: typeof FilesSplatRoute
   MyProposalsRoute: typeof MyProposalsRoute
+  OrganizerActivitiesRoute: typeof OrganizerActivitiesRoute
   OrganizerManuscriptsRoute: typeof OrganizerManuscriptsRoute
   OrganizerPaymentsRoute: typeof OrganizerPaymentsRoute
   OrganizerProposalsRoute: typeof OrganizerProposalsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
+  ApiOrganizerActivitiesRoute: typeof ApiOrganizerActivitiesRoute
+  ApiOrganizerActivityConfigRoute: typeof ApiOrganizerActivityConfigRoute
   ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
   ApiOrganizerPaymentsRoute: typeof ApiOrganizerPaymentsRoute
   ApiOrganizerProposalsRoute: typeof ApiOrganizerProposalsRoute
@@ -431,6 +484,7 @@ export interface RootRouteChildren {
   ApiProjectsManuscriptsRoute: typeof ApiProjectsManuscriptsRoute
   ApiProjectsPaymentCodeRoute: typeof ApiProjectsPaymentCodeRoute
   ApiProjectsProposalsRoute: typeof ApiProjectsProposalsRoute
+  OrganizerActivitiesActivityIdRoute: typeof OrganizerActivitiesActivityIdRoute
   ProjectsProjectIdAuthorsRoute: typeof ProjectsProjectIdAuthorsRoute
   ProjectsProjectIdManuscriptRoute: typeof ProjectsProjectIdManuscriptRoute
   ProjectsProjectIdPaymentRoute: typeof ProjectsProjectIdPaymentRoute
@@ -508,6 +562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrganizerManuscriptsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/organizer/activities': {
+      id: '/organizer/activities'
+      path: '/organizer/activities'
+      fullPath: '/organizer/activities'
+      preLoaderRoute: typeof OrganizerActivitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my/proposals': {
       id: '/my/proposals'
       path: '/my/proposals'
@@ -578,6 +639,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdAuthorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/organizer/activities_/$activityId': {
+      id: '/organizer/activities_/$activityId'
+      path: '/organizer/activities/$activityId'
+      fullPath: '/organizer/activities/$activityId'
+      preLoaderRoute: typeof OrganizerActivitiesActivityIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/projects/proposals': {
       id: '/api/projects/proposals'
       path: '/api/projects/proposals'
@@ -634,6 +702,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOrganizerManuscriptsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/organizer/activity-config': {
+      id: '/api/organizer/activity-config'
+      path: '/api/organizer/activity-config'
+      fullPath: '/api/organizer/activity-config'
+      preLoaderRoute: typeof ApiOrganizerActivityConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/organizer/activities': {
+      id: '/api/organizer/activities'
+      path: '/api/organizer/activities'
+      fullPath: '/api/organizer/activities'
+      preLoaderRoute: typeof ApiOrganizerActivitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/my/proposals': {
       id: '/api/my/proposals'
       path: '/api/my/proposals'
@@ -684,11 +766,14 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   FilesSplatRoute: FilesSplatRoute,
   MyProposalsRoute: MyProposalsRoute,
+  OrganizerActivitiesRoute: OrganizerActivitiesRoute,
   OrganizerManuscriptsRoute: OrganizerManuscriptsRoute,
   OrganizerPaymentsRoute: OrganizerPaymentsRoute,
   OrganizerProposalsRoute: OrganizerProposalsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiMyProposalsRoute: ApiMyProposalsRoute,
+  ApiOrganizerActivitiesRoute: ApiOrganizerActivitiesRoute,
+  ApiOrganizerActivityConfigRoute: ApiOrganizerActivityConfigRoute,
   ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
   ApiOrganizerPaymentsRoute: ApiOrganizerPaymentsRoute,
   ApiOrganizerProposalsRoute: ApiOrganizerProposalsRoute,
@@ -697,6 +782,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiProjectsManuscriptsRoute: ApiProjectsManuscriptsRoute,
   ApiProjectsPaymentCodeRoute: ApiProjectsPaymentCodeRoute,
   ApiProjectsProposalsRoute: ApiProjectsProposalsRoute,
+  OrganizerActivitiesActivityIdRoute: OrganizerActivitiesActivityIdRoute,
   ProjectsProjectIdAuthorsRoute: ProjectsProjectIdAuthorsRoute,
   ProjectsProjectIdManuscriptRoute: ProjectsProjectIdManuscriptRoute,
   ProjectsProjectIdPaymentRoute: ProjectsProjectIdPaymentRoute,

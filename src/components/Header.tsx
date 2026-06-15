@@ -53,6 +53,13 @@ export default function Header() {
 						My Proposals
 					</Link>
 					<Link
+						to="/organizer/activities"
+						className="nav-link"
+						activeProps={{ className: "nav-link is-active" }}
+					>
+						Manage
+					</Link>
+					<Link
 						to="/organizer/proposals"
 						className="nav-link"
 						activeProps={{ className: "nav-link is-active" }}
