@@ -13,6 +13,15 @@ import type {
 } from "#/lib/celebration/state-machine";
 import type { MyProposalRecord } from "./api/my/proposals";
 
+// 进入稿件阶段的 project 状态：展示「提交 / 查看稿件」入口
+const MANUSCRIPT_STAGES: ProjectStatus[] = [
+	"proposal_approved",
+	"manuscript_submitted",
+	"manuscript_approved",
+	"info_supplement",
+	"completed",
+];
+
 export const Route = createFileRoute("/my/proposals")({
 	component: MyProposalsPage,
 });
@@ -129,6 +138,17 @@ function MyProposalsPage() {
 											>
 												查看活动
 											</Link>
+											{MANUSCRIPT_STAGES.includes(projectStatus) && (
+												<Link
+													to="/projects/$projectId/manuscript"
+													params={{ projectId: proposal.id }}
+													className="demo-button no-underline"
+												>
+													{projectStatus === "proposal_approved"
+														? "提交稿件"
+														: "查看稿件"}
+												</Link>
+											)}
 											{canRestartProposal(projectStatus) && (
 												<Link
 													to="/activities/$activityId/proposal"

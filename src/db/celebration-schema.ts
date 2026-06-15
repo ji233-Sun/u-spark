@@ -11,6 +11,7 @@ import {
 	unique,
 	uuid,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth-schema.ts";
 import {
 	activityStatus,
 	emailStatus,
@@ -20,7 +21,6 @@ import {
 	paymentStatus,
 	projectStatus,
 } from "./enums.ts";
-import { user } from "./auth-schema.ts";
 
 // ───────────────────────────────────────────────────────────
 // 统一表单引擎的 JSON 形状（T01 ③：schema 驱动，立项与问卷共用）
@@ -232,10 +232,17 @@ export const manuscriptVersion = pgTable(
 			.notNull()
 			.references(() => manuscript.id, { onDelete: "cascade" }),
 		version: integer("version").notNull(),
+		// 稿件封面图（T19，存储 key，私有签名访问见 /files）
+		coverImageUrl: text("cover_image_url"),
 		// 网盘链接 + 提取码（读聚合时按角色剥离）
 		driveLink: text("drive_link"),
 		extractCode: text("extract_code"),
 		note: text("note"),
+		// 每版本独立审核状态（T20/T23：重提副本独立审核、版本可追溯）
+		status: manuscriptStatus("status").notNull().default("pending"),
+		reviewReason: text("review_reason"), // 拒绝 / 打回理由，对用户可见
+		reviewedBy: text("reviewed_by").references(() => user.id),
+		reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
 		submittedBy: text("submitted_by").references(() => user.id),
 		submittedAt: timestamp("submitted_at", { withTimezone: true })
 			.notNull()

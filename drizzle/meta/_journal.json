@@ -15,6 +15,13 @@
       "when": 1781505867267,
       "tag": "0001_motionless_pretty_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781532639647,
+      "tag": "0002_noisy_lyja",
+      "breakpoints": true
     }
   ]
 }

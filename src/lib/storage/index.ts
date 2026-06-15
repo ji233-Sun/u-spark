@@ -36,10 +36,13 @@ export async function getObject(key: string): Promise<Uint8Array | null> {
 	return provider.get(key);
 }
 
+export type { StorageProvider } from "./provider.ts";
+export { signedFileUrl } from "./server-url.ts";
 export { buildSignedPath, signKey, verifySignature } from "./signing.ts";
 export {
 	ALLOWED_IMAGE_TYPES,
+	IMAGE_EXTENSIONS,
 	MAX_IMAGE_BYTES,
+	mimeFromKey,
 	validateImageUpload,
 } from "./validation.ts";
-export type { StorageProvider } from "./provider.ts";

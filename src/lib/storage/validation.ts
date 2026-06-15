@@ -9,6 +9,27 @@ export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
 
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
 
+// mime ↔ 扩展名（存储 key 用确定扩展名，私有访问读取时据此回填 content-type）
+export const IMAGE_EXTENSIONS = {
+	"image/png": "png",
+	"image/jpeg": "jpg",
+	"image/webp": "webp",
+	"image/gif": "gif",
+} satisfies Record<AllowedImageType, string>;
+
+const EXTENSION_TO_MIME: Record<string, AllowedImageType> = {
+	png: "image/png",
+	jpg: "image/jpeg",
+	jpeg: "image/jpeg",
+	webp: "image/webp",
+	gif: "image/gif",
+};
+
+export function mimeFromKey(key: string): AllowedImageType | null {
+	const ext = key.split(".").pop()?.toLowerCase() ?? "";
+	return EXTENSION_TO_MIME[ext] ?? null;
+}
+
 export type ValidationResult =
 	| { ok: true; type: AllowedImageType }
 	| { ok: false; reason: string };
