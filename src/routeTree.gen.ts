@@ -16,12 +16,14 @@ import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
 import { Route as ApiProjectsProposalsRouteImport } from './routes/api/projects/proposals'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
+import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ActivitiesActivityIdProposalRouteImport } from './routes/activities_.$activityId.proposal'
 
@@ -60,6 +62,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyProposalsRoute = MyProposalsRouteImport.update({
+  id: '/my/proposals',
+  path: '/my/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
@@ -90,6 +97,11 @@ const ApiPasswordResetRequestRoute = ApiPasswordResetRequestRouteImport.update({
   path: '/api/password-reset/request',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMyProposalsRoute = ApiMyProposalsRouteImport.update({
+  id: '/api/my/proposals',
+  path: '/api/my/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -114,8 +126,10 @@ export interface FileRoutesByFullPath {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/my/proposals': typeof MyProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
 }
@@ -131,8 +145,10 @@ export interface FileRoutesByTo {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/my/proposals': typeof MyProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
 }
@@ -149,8 +165,10 @@ export interface FileRoutesById {
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/my/proposals': typeof MyProposalsRoute
   '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
 }
@@ -168,8 +186,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/my/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
+    | '/api/my/proposals'
     | '/api/password-reset/request'
     | '/api/projects/proposals'
   fileRoutesByTo: FileRoutesByTo
@@ -185,8 +205,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/my/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
+    | '/api/my/proposals'
     | '/api/password-reset/request'
     | '/api/projects/proposals'
   id:
@@ -202,8 +224,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/my/proposals'
     | '/activities_/$activityId/proposal'
     | '/api/auth/$'
+    | '/api/my/proposals'
     | '/api/password-reset/request'
     | '/api/projects/proposals'
   fileRoutesById: FileRoutesById
@@ -220,7 +244,9 @@ export interface RootRouteChildren {
   DemoBetterAuthRoute: typeof DemoBetterAuthRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  MyProposalsRoute: typeof MyProposalsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
   ApiProjectsProposalsRoute: typeof ApiProjectsProposalsRoute
 }
@@ -276,6 +302,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my/proposals': {
+      id: '/my/proposals'
+      path: '/my/proposals'
+      fullPath: '/my/proposals'
+      preLoaderRoute: typeof MyProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
@@ -318,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPasswordResetRequestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/my/proposals': {
+      id: '/api/my/proposals'
+      path: '/api/my/proposals'
+      fullPath: '/api/my/proposals'
+      preLoaderRoute: typeof ApiMyProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -358,7 +398,9 @@ const rootRouteChildren: RootRouteChildren = {
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  MyProposalsRoute: MyProposalsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
   ApiProjectsProposalsRoute: ApiProjectsProposalsRoute,
 }
