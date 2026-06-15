@@ -17,6 +17,7 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrganizerProposalsRouteImport } from './routes/organizer.proposals'
+import { Route as OrganizerManuscriptsRouteImport } from './routes/organizer.manuscripts'
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as FilesSplatRouteImport } from './routes/files.$'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -29,6 +30,7 @@ import { Route as ApiProjectsProposalsRouteImport } from './routes/api/projects/
 import { Route as ApiProjectsManuscriptsRouteImport } from './routes/api/projects/manuscripts'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
 import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organizer/proposals'
+import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ActivitiesActivityIdProposalRouteImport } from './routes/activities_.$activityId.proposal'
@@ -71,6 +73,11 @@ const IndexRoute = IndexRouteImport.update({
 const OrganizerProposalsRoute = OrganizerProposalsRouteImport.update({
   id: '/organizer/proposals',
   path: '/organizer/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizerManuscriptsRoute = OrganizerManuscriptsRouteImport.update({
+  id: '/organizer/manuscripts',
+  path: '/organizer/manuscripts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyProposalsRoute = MyProposalsRouteImport.update({
@@ -134,6 +141,11 @@ const ApiOrganizerProposalsRoute = ApiOrganizerProposalsRouteImport.update({
   path: '/api/organizer/proposals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizerManuscriptsRoute = ApiOrganizerManuscriptsRouteImport.update({
+  id: '/api/organizer/manuscripts',
+  path: '/api/organizer/manuscripts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMyProposalsRoute = ApiMyProposalsRouteImport.update({
   id: '/api/my/proposals',
   path: '/api/my/proposals',
@@ -166,10 +178,12 @@ export interface FileRoutesByFullPath {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
+  '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
+  '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
@@ -191,10 +205,12 @@ export interface FileRoutesByTo {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
+  '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
+  '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
@@ -217,10 +233,12 @@ export interface FileRoutesById {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
+  '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
   '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
+  '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
@@ -244,10 +262,12 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
+    | '/organizer/manuscripts'
     | '/organizer/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
+    | '/api/organizer/manuscripts'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
     | '/api/projects/manuscripts'
@@ -269,10 +289,12 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
+    | '/organizer/manuscripts'
     | '/organizer/proposals'
     | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
+    | '/api/organizer/manuscripts'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
     | '/api/projects/manuscripts'
@@ -294,10 +316,12 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
+    | '/organizer/manuscripts'
     | '/organizer/proposals'
     | '/activities_/$activityId/proposal'
     | '/api/auth/$'
     | '/api/my/proposals'
+    | '/api/organizer/manuscripts'
     | '/api/organizer/proposals'
     | '/api/password-reset/request'
     | '/api/projects/manuscripts'
@@ -320,9 +344,11 @@ export interface RootRouteChildren {
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   FilesSplatRoute: typeof FilesSplatRoute
   MyProposalsRoute: typeof MyProposalsRoute
+  OrganizerManuscriptsRoute: typeof OrganizerManuscriptsRoute
   OrganizerProposalsRoute: typeof OrganizerProposalsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
+  ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
   ApiOrganizerProposalsRoute: typeof ApiOrganizerProposalsRoute
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
   ApiProjectsManuscriptsRoute: typeof ApiProjectsManuscriptsRoute
@@ -386,6 +412,13 @@ declare module '@tanstack/react-router' {
       path: '/organizer/proposals'
       fullPath: '/organizer/proposals'
       preLoaderRoute: typeof OrganizerProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organizer/manuscripts': {
+      id: '/organizer/manuscripts'
+      path: '/organizer/manuscripts'
+      fullPath: '/organizer/manuscripts'
+      preLoaderRoute: typeof OrganizerManuscriptsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my/proposals': {
@@ -472,6 +505,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOrganizerProposalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/organizer/manuscripts': {
+      id: '/api/organizer/manuscripts'
+      path: '/api/organizer/manuscripts'
+      fullPath: '/api/organizer/manuscripts'
+      preLoaderRoute: typeof ApiOrganizerManuscriptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/my/proposals': {
       id: '/api/my/proposals'
       path: '/api/my/proposals'
@@ -522,9 +562,11 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   FilesSplatRoute: FilesSplatRoute,
   MyProposalsRoute: MyProposalsRoute,
+  OrganizerManuscriptsRoute: OrganizerManuscriptsRoute,
   OrganizerProposalsRoute: OrganizerProposalsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiMyProposalsRoute: ApiMyProposalsRoute,
+  ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
   ApiOrganizerProposalsRoute: ApiOrganizerProposalsRoute,
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
   ApiProjectsManuscriptsRoute: ApiProjectsManuscriptsRoute,
