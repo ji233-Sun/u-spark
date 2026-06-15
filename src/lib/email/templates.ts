@@ -24,6 +24,10 @@ const TEMPLATES = {
 		subject: "【U-Spark】新立项待审核",
 		body: `项目「${d.projectTitle}」已提交立项，请前往后台审核。`,
 	}),
+	proposal_receipt: (d) => ({
+		subject: "【U-Spark】立项提交回执",
+		body: `你已完成「${d.activityTitle}」的立项填写，项目「${d.projectTitle}」已进入审核队列。`,
+	}),
 	proposal_approved: (d) => ({
 		subject: "【U-Spark】立项通过",
 		body: `你的项目「${d.projectTitle}」立项已通过，可开始投稿。`,

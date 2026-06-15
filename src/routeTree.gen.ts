@@ -20,8 +20,10 @@ import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-qu
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
+import { Route as ApiProjectsProposalsRouteImport } from './routes/api/projects/proposals'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ActivitiesActivityIdProposalRouteImport } from './routes/activities_.$activityId.proposal'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -78,6 +80,11 @@ const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
   path: '/activities/$activityId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProjectsProposalsRoute = ApiProjectsProposalsRouteImport.update({
+  id: '/api/projects/proposals',
+  path: '/api/projects/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPasswordResetRequestRoute = ApiPasswordResetRequestRouteImport.update({
   id: '/api/password-reset/request',
   path: '/api/password-reset/request',
@@ -88,6 +95,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActivitiesActivityIdProposalRoute =
+  ActivitiesActivityIdProposalRouteImport.update({
+    id: '/proposal',
+    path: '/proposal',
+    getParentRoute: () => ActivitiesActivityIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,12 +110,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/activities/$activityId': typeof ActivitiesActivityIdRoute
+  '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
+  '/api/projects/proposals': typeof ApiProjectsProposalsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -112,12 +127,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/activities/$activityId': typeof ActivitiesActivityIdRoute
+  '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
+  '/api/projects/proposals': typeof ApiProjectsProposalsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,12 +145,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/activities_/$activityId': typeof ActivitiesActivityIdRoute
+  '/activities_/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/demo/better-auth': typeof DemoBetterAuthRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
+  '/api/projects/proposals': typeof ApiProjectsProposalsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -149,8 +168,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/password-reset/request'
+    | '/api/projects/proposals'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -164,8 +185,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/activities/$activityId/proposal'
     | '/api/auth/$'
     | '/api/password-reset/request'
+    | '/api/projects/proposals'
   id:
     | '__root__'
     | '/'
@@ -179,8 +202,10 @@ export interface FileRouteTypes {
     | '/demo/better-auth'
     | '/demo/drizzle'
     | '/demo/tanstack-query'
+    | '/activities_/$activityId/proposal'
     | '/api/auth/$'
     | '/api/password-reset/request'
+    | '/api/projects/proposals'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -191,12 +216,13 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRoute
+  ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRouteWithChildren
   DemoBetterAuthRoute: typeof DemoBetterAuthRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
+  ApiProjectsProposalsRoute: typeof ApiProjectsProposalsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -278,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivitiesActivityIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/projects/proposals': {
+      id: '/api/projects/proposals'
+      path: '/api/projects/proposals'
+      fullPath: '/api/projects/proposals'
+      preLoaderRoute: typeof ApiProjectsProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/password-reset/request': {
       id: '/api/password-reset/request'
       path: '/api/password-reset/request'
@@ -292,8 +325,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activities_/$activityId/proposal': {
+      id: '/activities_/$activityId/proposal'
+      path: '/proposal'
+      fullPath: '/activities/$activityId/proposal'
+      preLoaderRoute: typeof ActivitiesActivityIdProposalRouteImport
+      parentRoute: typeof ActivitiesActivityIdRoute
+    }
   }
 }
+
+interface ActivitiesActivityIdRouteChildren {
+  ActivitiesActivityIdProposalRoute: typeof ActivitiesActivityIdProposalRoute
+}
+
+const ActivitiesActivityIdRouteChildren: ActivitiesActivityIdRouteChildren = {
+  ActivitiesActivityIdProposalRoute: ActivitiesActivityIdProposalRoute,
+}
+
+const ActivitiesActivityIdRouteWithChildren =
+  ActivitiesActivityIdRoute._addFileChildren(ActivitiesActivityIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -303,12 +354,13 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  ActivitiesActivityIdRoute: ActivitiesActivityIdRoute,
+  ActivitiesActivityIdRoute: ActivitiesActivityIdRouteWithChildren,
   DemoBetterAuthRoute: DemoBetterAuthRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
+  ApiProjectsProposalsRoute: ApiProjectsProposalsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -20,6 +20,16 @@ describe("邮件模板", () => {
 		expect(r.body).toContain("猫娘企划");
 	});
 
+	it("立项回执模板插入活动名与项目名", () => {
+		const r = renderTemplate("proposal_receipt", {
+			activityTitle: "夏日活动",
+			projectTitle: "猫娘企划",
+		});
+		expect(r.subject).toContain("立项提交回执");
+		expect(r.body).toContain("夏日活动");
+		expect(r.body).toContain("猫娘企划");
+	});
+
 	it("缺省 reason 不渲染 undefined", () => {
 		const r = renderTemplate("proposal_rejected", { projectTitle: "X" });
 		expect(r.body).not.toContain("undefined");
