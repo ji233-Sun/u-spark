@@ -7,5 +7,7 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
     environment: "node",
+    // 启用全局 afterEach，使 @testing-library/react 在组件测试间自动 cleanup（避免 DOM 累积）。
+    globals: true,
   },
 });
