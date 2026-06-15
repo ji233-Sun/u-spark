@@ -80,6 +80,13 @@ export default function Header() {
 					>
 						Payments
 					</Link>
+					<Link
+						to="/organizer/export"
+						className="nav-link"
+						activeProps={{ className: "nav-link is-active" }}
+					>
+						Export
+					</Link>
 					<a
 						href="https://tanstack.com/start/latest/docs/framework/react/overview"
 						className="nav-link"

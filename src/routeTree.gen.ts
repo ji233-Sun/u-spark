@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrganizerProposalsRouteImport } from './routes/organizer.proposals'
 import { Route as OrganizerPaymentsRouteImport } from './routes/organizer.payments'
 import { Route as OrganizerManuscriptsRouteImport } from './routes/organizer.manuscripts'
+import { Route as OrganizerExportRouteImport } from './routes/organizer.export'
 import { Route as OrganizerActivitiesRouteImport } from './routes/organizer.activities'
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as FilesSplatRouteImport } from './routes/files.$'
@@ -39,6 +40,7 @@ import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/passwo
 import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organizer/proposals'
 import { Route as ApiOrganizerPaymentsRouteImport } from './routes/api/organizer/payments'
 import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
+import { Route as ApiOrganizerExportRouteImport } from './routes/api/organizer/export'
 import { Route as ApiOrganizerActivityConfigRouteImport } from './routes/api/organizer/activity-config'
 import { Route as ApiOrganizerActivitiesRouteImport } from './routes/api/organizer/activities'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
@@ -93,6 +95,11 @@ const OrganizerPaymentsRoute = OrganizerPaymentsRouteImport.update({
 const OrganizerManuscriptsRoute = OrganizerManuscriptsRouteImport.update({
   id: '/organizer/manuscripts',
   path: '/organizer/manuscripts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizerExportRoute = OrganizerExportRouteImport.update({
+  id: '/organizer/export',
+  path: '/organizer/export',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrganizerActivitiesRoute = OrganizerActivitiesRouteImport.update({
@@ -199,6 +206,11 @@ const ApiOrganizerManuscriptsRoute = ApiOrganizerManuscriptsRouteImport.update({
   path: '/api/organizer/manuscripts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizerExportRoute = ApiOrganizerExportRouteImport.update({
+  id: '/api/organizer/export',
+  path: '/api/organizer/export',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOrganizerActivityConfigRoute =
   ApiOrganizerActivityConfigRouteImport.update({
     id: '/api/organizer/activity-config',
@@ -243,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
+  '/organizer/export': typeof OrganizerExportRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
@@ -251,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
+  '/api/organizer/export': typeof ApiOrganizerExportRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
@@ -280,6 +294,7 @@ export interface FileRoutesByTo {
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
+  '/organizer/export': typeof OrganizerExportRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
@@ -288,6 +303,7 @@ export interface FileRoutesByTo {
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
+  '/api/organizer/export': typeof ApiOrganizerExportRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
@@ -318,6 +334,7 @@ export interface FileRoutesById {
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
+  '/organizer/export': typeof OrganizerExportRoute
   '/organizer/manuscripts': typeof OrganizerManuscriptsRoute
   '/organizer/payments': typeof OrganizerPaymentsRoute
   '/organizer/proposals': typeof OrganizerProposalsRoute
@@ -326,6 +343,7 @@ export interface FileRoutesById {
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
+  '/api/organizer/export': typeof ApiOrganizerExportRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
   '/api/organizer/proposals': typeof ApiOrganizerProposalsRoute
@@ -357,6 +375,7 @@ export interface FileRouteTypes {
     | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
+    | '/organizer/export'
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
@@ -365,6 +384,7 @@ export interface FileRouteTypes {
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
+    | '/api/organizer/export'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
@@ -394,6 +414,7 @@ export interface FileRouteTypes {
     | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
+    | '/organizer/export'
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
@@ -402,6 +423,7 @@ export interface FileRouteTypes {
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
+    | '/api/organizer/export'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
@@ -431,6 +453,7 @@ export interface FileRouteTypes {
     | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
+    | '/organizer/export'
     | '/organizer/manuscripts'
     | '/organizer/payments'
     | '/organizer/proposals'
@@ -439,6 +462,7 @@ export interface FileRouteTypes {
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
+    | '/api/organizer/export'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
     | '/api/organizer/proposals'
@@ -469,6 +493,7 @@ export interface RootRouteChildren {
   FilesSplatRoute: typeof FilesSplatRoute
   MyProposalsRoute: typeof MyProposalsRoute
   OrganizerActivitiesRoute: typeof OrganizerActivitiesRoute
+  OrganizerExportRoute: typeof OrganizerExportRoute
   OrganizerManuscriptsRoute: typeof OrganizerManuscriptsRoute
   OrganizerPaymentsRoute: typeof OrganizerPaymentsRoute
   OrganizerProposalsRoute: typeof OrganizerProposalsRoute
@@ -476,6 +501,7 @@ export interface RootRouteChildren {
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiOrganizerActivitiesRoute: typeof ApiOrganizerActivitiesRoute
   ApiOrganizerActivityConfigRoute: typeof ApiOrganizerActivityConfigRoute
+  ApiOrganizerExportRoute: typeof ApiOrganizerExportRoute
   ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
   ApiOrganizerPaymentsRoute: typeof ApiOrganizerPaymentsRoute
   ApiOrganizerProposalsRoute: typeof ApiOrganizerProposalsRoute
@@ -560,6 +586,13 @@ declare module '@tanstack/react-router' {
       path: '/organizer/manuscripts'
       fullPath: '/organizer/manuscripts'
       preLoaderRoute: typeof OrganizerManuscriptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organizer/export': {
+      id: '/organizer/export'
+      path: '/organizer/export'
+      fullPath: '/organizer/export'
+      preLoaderRoute: typeof OrganizerExportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/organizer/activities': {
@@ -702,6 +735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOrganizerManuscriptsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/organizer/export': {
+      id: '/api/organizer/export'
+      path: '/api/organizer/export'
+      fullPath: '/api/organizer/export'
+      preLoaderRoute: typeof ApiOrganizerExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/organizer/activity-config': {
       id: '/api/organizer/activity-config'
       path: '/api/organizer/activity-config'
@@ -767,6 +807,7 @@ const rootRouteChildren: RootRouteChildren = {
   FilesSplatRoute: FilesSplatRoute,
   MyProposalsRoute: MyProposalsRoute,
   OrganizerActivitiesRoute: OrganizerActivitiesRoute,
+  OrganizerExportRoute: OrganizerExportRoute,
   OrganizerManuscriptsRoute: OrganizerManuscriptsRoute,
   OrganizerPaymentsRoute: OrganizerPaymentsRoute,
   OrganizerProposalsRoute: OrganizerProposalsRoute,
@@ -774,6 +815,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiOrganizerActivitiesRoute: ApiOrganizerActivitiesRoute,
   ApiOrganizerActivityConfigRoute: ApiOrganizerActivityConfigRoute,
+  ApiOrganizerExportRoute: ApiOrganizerExportRoute,
   ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
   ApiOrganizerPaymentsRoute: ApiOrganizerPaymentsRoute,
   ApiOrganizerProposalsRoute: ApiOrganizerProposalsRoute,
