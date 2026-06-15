@@ -6,6 +6,7 @@ import { db } from "#/db/index";
 import {
 	AUTH_MAGIC_LINK_EXPIRES_SECONDS,
 	AUTH_OTP_EXPIRES_SECONDS,
+	AUTH_PASSWORD_RESET_EXPIRES_SECONDS,
 	AUTH_RATE_LIMIT_MAX,
 	AUTH_RATE_LIMIT_WINDOW_SECONDS,
 } from "./auth-policy.ts";
@@ -18,6 +19,15 @@ export const auth = betterAuth({
 		enabled: true,
 		requireEmailVerification: true,
 		autoSignIn: false,
+		resetPasswordTokenExpiresIn: AUTH_PASSWORD_RESET_EXPIRES_SECONDS,
+		revokeSessionsOnPasswordReset: true,
+		async sendResetPassword({ user, url }) {
+			await sendMail({
+				to: user.email,
+				template: "reset_password",
+				data: { url },
+			});
+		},
 	},
 	emailVerification: {
 		sendOnSignUp: true,

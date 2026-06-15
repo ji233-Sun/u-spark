@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { authClient } from "#/lib/auth-client";
 import {
@@ -302,6 +302,12 @@ function BetterAuthDemo() {
 
 						<Feedback error={error} message={message} />
 						<SubmitButton loading={loading} label="登录" />
+						<Link
+							to="/forgot-password"
+							className="demo-muted text-center text-sm no-underline transition-colors hover:text-[var(--sea-ink)]"
+						>
+							忘记密码？
+						</Link>
 					</form>
 				)}
 

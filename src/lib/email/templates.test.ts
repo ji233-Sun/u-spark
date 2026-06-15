@@ -8,6 +8,13 @@ describe("邮件模板", () => {
 		expect(r.body).toContain("123456");
 	});
 
+	it("渲染 24 小时找回密码链接模板", () => {
+		const r = renderTemplate("reset_password", { url: "https://example.com" });
+		expect(r.subject).toContain("重置密码");
+		expect(r.body).toContain("24 小时");
+		expect(r.body).toContain("https://example.com");
+	});
+
 	it("状态流转模板插入项目名", () => {
 		const r = renderTemplate("proposal_approved", { projectTitle: "猫娘企划" });
 		expect(r.body).toContain("猫娘企划");

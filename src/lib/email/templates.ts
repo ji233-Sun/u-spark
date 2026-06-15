@@ -13,7 +13,7 @@ const TEMPLATES = {
 	}),
 	reset_password: (d) => ({
 		subject: "【U-Spark】重置密码",
-		body: `点击链接重置密码（10 分钟内有效）：${d.url}`,
+		body: `点击链接重置密码（24 小时内有效）：${d.url}`,
 	}),
 	magic_link: (d) => ({
 		subject: "【U-Spark】登录链接",
