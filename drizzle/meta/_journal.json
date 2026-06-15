@@ -8,6 +8,13 @@
       "when": 1781504732749,
       "tag": "0000_dark_absorbing_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781505867267,
+      "tag": "0001_motionless_pretty_boy",
+      "breakpoints": true
     }
   ]
 }

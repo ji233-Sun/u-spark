@@ -23,8 +23,8 @@ export const formType = pgEnum("form_type", [
 ]);
 
 // ───────────────────────────────────────────────────────────
-// ⚠️ 状态枚举占位初稿 —— 待 T03 #3 状态机 SSOT 定稿后对齐
-//    旧实现中 project 为「多状态轴」，此处先给单轴占位，T03 时拆分
+// 状态枚举 —— T03 #3 状态机 SSOT 定稿（单主轴 + 正交派生）
+//   合法转换 / 邮件映射 / DDL 守卫见 src/lib/celebration/state-machine.ts
 // ───────────────────────────────────────────────────────────
 
 export const activityStatus = pgEnum("activity_status", [
@@ -38,8 +38,9 @@ export const projectStatus = pgEnum("project_status", [
 	"proposal_submitted", // 立项已提交，待审核
 	"proposal_approved", // 立项通过
 	"proposal_rejected", // 立项被拒
-	"manuscript_submitted", // 稿件已提交
+	"manuscript_submitted", // 稿件已提交（打回 / 拒绝细节见 manuscript_status）
 	"manuscript_approved", // 稿件通过
+	"info_supplement", // 信息补充阶段（填收款码 / 收件信息）
 	"completed", // 全流程完成
 	"withdrawn", // 已撤回
 ]);
