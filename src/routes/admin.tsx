@@ -70,6 +70,7 @@ function AdminPage() {
 				<PresetsSection />
 				<EmailTemplatesSection />
 				<UsersSection />
+				<RemindersSection />
 			</div>
 		</main>
 	);
@@ -443,6 +444,52 @@ function TemplateEditor({
 				</div>
 			</div>
 		</details>
+	);
+}
+
+// ── DDL 提醒（手动触发 T29 定时任务）──
+function RemindersSection() {
+	const [msg, setMsg] = useState("");
+	const [busy, setBusy] = useState(false);
+
+	const run = async () => {
+		setBusy(true);
+		const res = await fetch("/api/cron/ddl-reminders", { method: "POST" });
+		const j = (await res.json()) as {
+			ok: boolean;
+			error?: string;
+			activitiesScanned?: number;
+			remindersSent?: number;
+			recipientsNotified?: number;
+		};
+		setBusy(false);
+		setMsg(
+			j.ok
+				? `扫描活动 ${j.activitiesScanned} 个，新增提醒 ${j.remindersSent} 条，通知 ${j.recipientsNotified} 人次。`
+				: (j.error ?? "执行失败"),
+		);
+	};
+
+	return (
+		<section className="demo-panel">
+			<h2 className="m-0 mb-2 text-lg font-bold text-[var(--sea-ink)]">
+				DDL 临近提醒
+			</h2>
+			<p className="demo-muted mb-4 text-sm">
+				通常由外部 cron 定期调用 `/api/cron/ddl-reminders`（携带
+				CRON_SECRET）。也可在此手动扫描，临近 72h 内的三类 DDL
+				各提醒一次（幂等不重复）。
+			</p>
+			<button
+				type="button"
+				className="demo-button w-fit"
+				onClick={run}
+				disabled={busy}
+			>
+				{busy ? "扫描中..." : "立即扫描并提醒"}
+			</button>
+			{msg && <p className="demo-alert m-0 mt-3 text-sm">{msg}</p>}
+		</section>
 	);
 }
 

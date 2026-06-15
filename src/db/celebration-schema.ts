@@ -307,6 +307,20 @@ export const formResponse = pgTable("form_response", {
 		.defaultNow(),
 });
 
+// DDL 提醒幂等记录（T29）：一个活动的每类 DDL 仅提醒一次，避免重复轰炸。
+export const ddlReminder = pgTable(
+	"ddl_reminder",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
+		activityId: uuid("activity_id")
+			.notNull()
+			.references(() => activity.id, { onDelete: "cascade" }),
+		deadlineKind: text("deadline_kind").notNull(), // proposal | submission | info_supplement
+		sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [unique("ddl_reminder_uq").on(t.activityId, t.deadlineKind)],
+);
+
 // 邮件模板覆盖（T28 管理员维护）：按 templateKey 覆盖内置注册表文案，
 // 文案用 {placeholder} 占位，发送时按 data 插值；无覆盖则回退内置模板。
 export const emailTemplate = pgTable("email_template", {

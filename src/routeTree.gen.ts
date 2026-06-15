@@ -50,6 +50,7 @@ import { Route as ApiOrganizerExportRouteImport } from './routes/api/organizer/e
 import { Route as ApiOrganizerActivityConfigRouteImport } from './routes/api/organizer/activity-config'
 import { Route as ApiOrganizerActivitiesRouteImport } from './routes/api/organizer/activities'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
+import { Route as ApiCronDdlRemindersRouteImport } from './routes/api/cron/ddl-reminders'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminPresetsRouteImport } from './routes/api/admin/presets'
@@ -269,6 +270,11 @@ const ApiMyProposalsRoute = ApiMyProposalsRouteImport.update({
   path: '/api/my/proposals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronDdlRemindersRoute = ApiCronDdlRemindersRouteImport.update({
+  id: '/api/cron/ddl-reminders',
+  path: '/api/cron/ddl-reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -337,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/presets': typeof ApiAdminPresetsRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/ddl-reminders': typeof ApiCronDdlRemindersRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
@@ -387,6 +394,7 @@ export interface FileRoutesByTo {
   '/api/admin/presets': typeof ApiAdminPresetsRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/ddl-reminders': typeof ApiCronDdlRemindersRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/api/admin/presets': typeof ApiAdminPresetsRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/ddl-reminders': typeof ApiCronDdlRemindersRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
@@ -490,6 +499,7 @@ export interface FileRouteTypes {
     | '/api/admin/presets'
     | '/api/admin/users'
     | '/api/auth/$'
+    | '/api/cron/ddl-reminders'
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
@@ -540,6 +550,7 @@ export interface FileRouteTypes {
     | '/api/admin/presets'
     | '/api/admin/users'
     | '/api/auth/$'
+    | '/api/cron/ddl-reminders'
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
@@ -590,6 +601,7 @@ export interface FileRouteTypes {
     | '/api/admin/presets'
     | '/api/admin/users'
     | '/api/auth/$'
+    | '/api/cron/ddl-reminders'
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
@@ -640,6 +652,7 @@ export interface RootRouteChildren {
   ApiAdminPresetsRoute: typeof ApiAdminPresetsRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCronDdlRemindersRoute: typeof ApiCronDdlRemindersRoute
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiOrganizerActivitiesRoute: typeof ApiOrganizerActivitiesRoute
   ApiOrganizerActivityConfigRoute: typeof ApiOrganizerActivityConfigRoute
@@ -949,6 +962,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMyProposalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/ddl-reminders': {
+      id: '/api/cron/ddl-reminders'
+      path: '/api/cron/ddl-reminders'
+      fullPath: '/api/cron/ddl-reminders'
+      preLoaderRoute: typeof ApiCronDdlRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -1042,6 +1062,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminPresetsRoute: ApiAdminPresetsRoute,
   ApiAdminUsersRoute: ApiAdminUsersRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCronDdlRemindersRoute: ApiCronDdlRemindersRoute,
   ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiOrganizerActivitiesRoute: ApiOrganizerActivitiesRoute,
   ApiOrganizerActivityConfigRoute: ApiOrganizerActivityConfigRoute,
