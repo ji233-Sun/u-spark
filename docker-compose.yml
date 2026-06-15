@@ -1,0 +1,23 @@
+# 本地开发用 PostgreSQL（仅供开发，勿用于生产）
+# 启动：docker compose up -d   停止：docker compose down   清库：docker compose down -v
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: u-spark-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: uspark
+      POSTGRES_PASSWORD: uspark
+      POSTGRES_DB: uspark
+    ports:
+      - '5432:5432'
+    volumes:
+      - uspark_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U uspark -d uspark']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  uspark_pgdata:
