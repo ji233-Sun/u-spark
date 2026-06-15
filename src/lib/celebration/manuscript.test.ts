@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
 	canSubmitManuscript,
+	canSubmitSupplementCopy,
 	hasManuscriptErrors,
 	isManuscriptReviewDecision,
 	MANUSCRIPT_APPROVE_PROJECT_FLOW,
 	MANUSCRIPT_REVIEW_TARGET,
+	manuscriptReviewKind,
 	manuscriptSubmitMode,
 	nextManuscriptVersion,
 	validateManuscriptSubmission,
@@ -106,5 +108,23 @@ describe("审核决定映射", () => {
 			"manuscript_approved",
 			"info_supplement",
 		]);
+	});
+});
+
+describe("T23 重提子流程", () => {
+	it("信息补充阶段且无审核中副本方可重交", () => {
+		expect(canSubmitSupplementCopy("info_supplement", false)).toBe(true);
+		expect(canSubmitSupplementCopy("info_supplement", true)).toBe(false);
+		expect(canSubmitSupplementCopy("manuscript_submitted", false)).toBe(false);
+	});
+
+	it("审核类型区分首次提交与重提副本", () => {
+		// 首次：manuscript_submitted 且被审版本 = 当前版本
+		expect(manuscriptReviewKind("manuscript_submitted", 1, 1)).toBe("initial");
+		// 副本：info_supplement 且被审版本 > 当前过审版本
+		expect(manuscriptReviewKind("info_supplement", 2, 1)).toBe("copy");
+		// 非法组合
+		expect(manuscriptReviewKind("info_supplement", 1, 1)).toBeNull();
+		expect(manuscriptReviewKind("completed", 2, 1)).toBeNull();
 	});
 });

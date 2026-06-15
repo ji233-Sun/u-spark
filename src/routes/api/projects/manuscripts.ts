@@ -11,6 +11,7 @@ import {
 import { db } from "#/db/index";
 import { auth } from "#/lib/auth";
 import {
+	canSubmitSupplementCopy,
 	hasManuscriptErrors,
 	manuscriptSubmitMode,
 	nextManuscriptVersion,
@@ -21,7 +22,6 @@ import {
 	assertProjectTransition,
 	effectiveDeadline,
 	InvalidTransitionError,
-	isActionBlockedByDeadline,
 	isOverdue,
 	type ManuscriptStatus,
 	type ProjectStatus,
@@ -37,9 +37,10 @@ export type ManuscriptDetail = {
 	projectStatus: ProjectStatus;
 	manuscriptStatus: ManuscriptStatus | null;
 	currentVersion: number;
-	submissionDeadline: string;
+	deadline: string;
 	submitMode: ReturnType<typeof manuscriptSubmitMode>;
 	canSubmit: boolean;
+	copyUnderReview: boolean;
 	latest: {
 		version: number;
 		coverUrl: string | null;
@@ -61,13 +62,8 @@ export const Route = createFileRoute("/api/projects/manuscripts")({
 	},
 });
 
-async function getManuscriptDetail({ request }: { request: Request }) {
-	const session = await auth.api.getSession({ headers: request.headers });
-	if (!session?.user) {
-		return Response.json({ ok: false, error: "请先登录。" }, { status: 401 });
-	}
-	const projectId = new URL(request.url).searchParams.get("projectId") ?? "";
-
+// 取项目 + 活动（含两类相关 DDL），owner 限定。
+async function loadProjectForOwner(projectId: string, userId: string) {
 	const [row] = await db
 		.select({
 			id: project.id,
@@ -78,19 +74,18 @@ async function getManuscriptDetail({ request }: { request: Request }) {
 			activityTitle: activity.title,
 			submissionDeadline: activity.submissionDeadline,
 			specialSubmissionDeadline: project.specialSubmissionDeadline,
+			infoSupplementDeadline: activity.infoSupplementDeadline,
+			specialInfoSupplementDeadline: project.specialInfoSupplementDeadline,
 		})
 		.from(project)
 		.innerJoin(activity, eq(activity.id, project.activityId))
 		.where(eq(project.id, projectId))
 		.limit(1);
+	if (!row) return { row: null, owned: false };
+	return { row, owned: row.createdBy === userId };
+}
 
-	if (!row) {
-		return Response.json({ ok: false, error: "立项不存在。" }, { status: 404 });
-	}
-	if (row.createdBy !== session.user.id) {
-		return Response.json({ ok: false, error: "无权访问。" }, { status: 403 });
-	}
-
+async function loadManuscriptState(projectId: string) {
 	const [ms] = await db
 		.select({
 			id: manuscript.id,
@@ -100,38 +95,73 @@ async function getManuscriptDetail({ request }: { request: Request }) {
 		.from(manuscript)
 		.where(eq(manuscript.projectId, projectId))
 		.limit(1);
+	if (!ms) return { ms: null, latest: null };
+	const [latest] = await db
+		.select()
+		.from(manuscriptVersion)
+		.where(eq(manuscriptVersion.manuscriptId, ms.id))
+		.orderBy(desc(manuscriptVersion.version))
+		.limit(1);
+	return { ms, latest: latest ?? null };
+}
 
-	const [latest] = ms
-		? await db
-				.select()
-				.from(manuscriptVersion)
-				.where(eq(manuscriptVersion.manuscriptId, ms.id))
-				.orderBy(desc(manuscriptVersion.version))
-				.limit(1)
-		: [];
+async function getManuscriptDetail({ request }: { request: Request }) {
+	const session = await auth.api.getSession({ headers: request.headers });
+	if (!session?.user) {
+		return Response.json({ ok: false, error: "请先登录。" }, { status: 401 });
+	}
+	const projectId = new URL(request.url).searchParams.get("projectId") ?? "";
+	const { row, owned } = await loadProjectForOwner(projectId, session.user.id);
+	if (!row) {
+		return Response.json({ ok: false, error: "立项不存在。" }, { status: 404 });
+	}
+	if (!owned) {
+		return Response.json({ ok: false, error: "无权访问。" }, { status: 403 });
+	}
 
-	const mode = manuscriptSubmitMode(
-		row.status as ProjectStatus,
-		(ms?.status as ManuscriptStatus | null) ?? null,
-	);
-	const deadline = effectiveDeadline(
-		row.submissionDeadline,
-		row.specialSubmissionDeadline,
-	);
+	const { ms, latest } = await loadManuscriptState(projectId);
+	const projectStatus = row.status as ProjectStatus;
+	const manuscriptStatus = (ms?.status as ManuscriptStatus | null) ?? null;
+	const currentVersion = ms?.currentVersion ?? 0;
+	const mode = manuscriptSubmitMode(projectStatus, manuscriptStatus);
+
+	// 审核中的重提副本：info_supplement 阶段、最新版本高于过审版本且仍 pending。
+	const copyUnderReview =
+		projectStatus === "info_supplement" &&
+		latest !== null &&
+		latest.status === "pending" &&
+		latest.version > currentVersion;
+
+	// 不同阶段受不同 DDL 约束。
+	const deadline =
+		mode === "supplement_copy"
+			? effectiveDeadline(
+					row.infoSupplementDeadline,
+					row.specialInfoSupplementDeadline,
+				)
+			: effectiveDeadline(
+					row.submissionDeadline,
+					row.specialSubmissionDeadline,
+				);
 	const overdue = isOverdue(deadline, new Date());
+
+	const canSubmit =
+		mode === "supplement_copy"
+			? canSubmitSupplementCopy(projectStatus, copyUnderReview) && !overdue
+			: (mode === "initial" || mode === "resubmit") && !overdue;
 
 	const detail: ManuscriptDetail = {
 		projectId: row.id,
 		projectTitle: row.title,
 		activityId: row.activityId,
 		activityTitle: row.activityTitle,
-		projectStatus: row.status as ProjectStatus,
-		manuscriptStatus: (ms?.status as ManuscriptStatus | null) ?? null,
-		currentVersion: ms?.currentVersion ?? 0,
-		submissionDeadline: deadline.toISOString(),
+		projectStatus,
+		manuscriptStatus,
+		currentVersion,
+		deadline: deadline.toISOString(),
 		submitMode: mode,
-		// supplement_copy 由 T23 子流程接管，此处不在本页开放普通提交。
-		canSubmit: (mode === "initial" || mode === "resubmit") && !overdue,
+		canSubmit,
+		copyUnderReview,
 		latest: latest
 			? {
 					version: latest.version,
@@ -168,46 +198,22 @@ async function submitManuscript({ request }: { request: Request }) {
 		return Response.json({ ok: false, error: "立项不存在。" }, { status: 400 });
 	}
 
-	const [row] = await db
-		.select({
-			id: project.id,
-			title: project.title,
-			status: project.status,
-			createdBy: project.createdBy,
-			activityId: project.activityId,
-			submissionDeadline: activity.submissionDeadline,
-			specialSubmissionDeadline: project.specialSubmissionDeadline,
-		})
-		.from(project)
-		.innerJoin(activity, eq(activity.id, project.activityId))
-		.where(eq(project.id, projectId))
-		.limit(1);
-
+	const { row, owned } = await loadProjectForOwner(projectId, session.user.id);
 	if (!row) {
 		return Response.json({ ok: false, error: "立项不存在。" }, { status: 404 });
 	}
-	// 数据级越权防护：仅立项创建者（队长）可提交稿件。
-	if (row.createdBy !== session.user.id) {
+	if (!owned) {
 		return Response.json(
 			{ ok: false, error: "仅立项创建者可提交稿件。" },
 			{ status: 403 },
 		);
 	}
 
-	const existing = await db
-		.select({
-			id: manuscript.id,
-			status: manuscript.status,
-			currentVersion: manuscript.currentVersion,
-		})
-		.from(manuscript)
-		.where(eq(manuscript.projectId, projectId))
-		.limit(1);
-	const current = existing[0] ?? null;
-
+	const { ms, latest } = await loadManuscriptState(projectId);
+	const projectStatus = row.status as ProjectStatus;
 	const mode = manuscriptSubmitMode(
-		row.status as ProjectStatus,
-		(current?.status as ManuscriptStatus | null) ?? null,
+		projectStatus,
+		(ms?.status as ManuscriptStatus | null) ?? null,
 	);
 	if (mode === "blocked") {
 		return Response.json(
@@ -215,24 +221,38 @@ async function submitManuscript({ request }: { request: Request }) {
 			{ status: 400 },
 		);
 	}
-	// 信息补充阶段的重交副本走 T23 子流程，本接口暂只处理首次提交 / 被拒重提。
-	if (mode === "supplement_copy") {
+
+	// T23：信息补充阶段已有 pending 副本在审核时，不可再次重交（避免堆叠）。
+	const copyUnderReview =
+		mode === "supplement_copy" &&
+		latest !== null &&
+		latest.status === "pending" &&
+		latest.version > (ms?.currentVersion ?? 0);
+	if (copyUnderReview) {
 		return Response.json(
-			{ ok: false, error: "信息补充阶段请使用重交稿件入口。" },
-			{ status: 400 },
+			{ ok: false, error: "已有重交副本在审核中，请等待结果。" },
+			{ status: 409 },
 		);
 	}
 
-	// DDL 守卫（effective = max(活动级, 项目级特批)）。
-	if (
-		isActionBlockedByDeadline(
-			row.submissionDeadline,
-			row.specialSubmissionDeadline,
-			new Date(),
-		)
-	) {
+	// DDL 守卫：首次/重提受稿件提交 DDL，重提副本受信息补充 DDL（均取 effective = max）。
+	const deadline =
+		mode === "supplement_copy"
+			? effectiveDeadline(
+					row.infoSupplementDeadline,
+					row.specialInfoSupplementDeadline,
+				)
+			: effectiveDeadline(
+					row.submissionDeadline,
+					row.specialSubmissionDeadline,
+				);
+	if (isOverdue(deadline, new Date())) {
 		return Response.json(
-			{ ok: false, error: "稿件提交已截止。" },
+			{
+				ok: false,
+				error:
+					mode === "supplement_copy" ? "信息补充已截止。" : "稿件提交已截止。",
+			},
 			{ status: 400 },
 		);
 	}
@@ -274,34 +294,31 @@ async function submitManuscript({ request }: { request: Request }) {
 					status: "pending",
 					submittedBy: session.user.id,
 				});
-				assertProjectTransition(
-					row.status as ProjectStatus,
-					"manuscript_submitted",
-				);
+				assertProjectTransition(projectStatus, "manuscript_submitted");
 				await tx
 					.update(project)
 					.set({ status: "manuscript_submitted", updatedAt: new Date() })
 					.where(eq(project.id, projectId));
-			} else {
-				// resubmit：被拒 / 打回后重提，重置审核为 pending，主轴维持 manuscript_submitted。
-				if (!current) {
-					throw new Error("manuscript missing for resubmit");
-				}
-				assertManuscriptTransition(
-					current.status as ManuscriptStatus,
-					"pending",
-				);
-				const version = nextManuscriptVersion(current.currentVersion);
-				await tx.insert(manuscriptVersion).values({
-					manuscriptId: current.id,
-					version,
-					coverImageUrl,
-					driveLink,
-					extractCode,
-					note,
-					status: "pending",
-					submittedBy: session.user.id,
-				});
+				return;
+			}
+			// resubmit / supplement_copy 均追加新版本（version = 最高版本 + 1）。
+			if (!ms || !latest) {
+				throw new Error("manuscript missing for resubmit/copy");
+			}
+			const version = nextManuscriptVersion(latest.version);
+			await tx.insert(manuscriptVersion).values({
+				manuscriptId: ms.id,
+				version,
+				coverImageUrl,
+				driveLink,
+				extractCode,
+				note,
+				status: "pending",
+				submittedBy: session.user.id,
+			});
+			if (mode === "resubmit") {
+				// 被拒 / 打回后重提：重置主审核态为 pending，主轴维持 manuscript_submitted。
+				assertManuscriptTransition(ms.status as ManuscriptStatus, "pending");
 				await tx
 					.update(manuscript)
 					.set({
@@ -309,8 +326,9 @@ async function submitManuscript({ request }: { request: Request }) {
 						currentVersion: version,
 						updatedAt: new Date(),
 					})
-					.where(eq(manuscript.id, current.id));
+					.where(eq(manuscript.id, ms.id));
 			}
+			// supplement_copy：仅追加 pending 副本，不动 manuscript.status / currentVersion / project.status。
 		});
 	} catch (err) {
 		if (err instanceof InvalidTransitionError) {
@@ -322,7 +340,7 @@ async function submitManuscript({ request }: { request: Request }) {
 		throw err;
 	}
 
-	// 通知组织者有新稿件待审（事务外，best-effort）。
+	// 通知组织者有新稿件 / 重提副本待审（事务外，best-effort）。
 	const organizers = await db
 		.select({ email: user.email })
 		.from(activityOrganizer)

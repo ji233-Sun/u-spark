@@ -106,3 +106,35 @@ export const MANUSCRIPT_APPROVE_PROJECT_FLOW = [
 	"manuscript_approved",
 	"info_supplement",
 ] satisfies ProjectStatus[];
+
+// ── T23 稿件重提子流程 ──
+// 信息补充阶段重交稿件 → 生成「待审核」副本（version > 当前过审版本，独立审核，不回退主状态）。
+// 审核中（已有 pending 副本）不可再次重交，避免副本堆叠。
+export function canSubmitSupplementCopy(
+	projectStatus: ProjectStatus,
+	hasPendingCopy: boolean,
+): boolean {
+	return projectStatus === "info_supplement" && !hasPendingCopy;
+}
+
+// 区分本次审核针对「首次提交」还是「重提副本」：
+//   initial —— manuscript_submitted 且被审版本即当前版本（主轴推进）
+//   copy    —— info_supplement 且被审版本高于当前过审版本（过审则替换、拒绝保持原态）
+export type ManuscriptReviewKind = "initial" | "copy";
+
+export function manuscriptReviewKind(
+	projectStatus: ProjectStatus,
+	reviewedVersion: number,
+	currentVersion: number,
+): ManuscriptReviewKind | null {
+	if (
+		projectStatus === "manuscript_submitted" &&
+		reviewedVersion === currentVersion
+	) {
+		return "initial";
+	}
+	if (projectStatus === "info_supplement" && reviewedVersion > currentVersion) {
+		return "copy";
+	}
+	return null;
+}

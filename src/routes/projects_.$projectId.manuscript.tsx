@@ -127,20 +127,34 @@ function ManuscriptPage() {
 				)}
 
 				{detail.canSubmit ? (
-					<ManuscriptForm
-						projectId={projectId}
-						resubmit={detail.submitMode === "resubmit"}
-						onDone={load}
-					/>
+					<>
+						{detail.submitMode === "supplement_copy" && (
+							<p className="demo-muted mb-3 text-sm">
+								信息补充阶段可重交稿件，将生成待审核副本；副本通过后替换当前提交，被拒则保持原过审稿件。
+							</p>
+						)}
+						<ManuscriptForm
+							projectId={projectId}
+							submitLabel={
+								detail.submitMode === "supplement_copy"
+									? "重交稿件副本"
+									: detail.submitMode === "resubmit"
+										? "重新提交稿件"
+										: "提交稿件"
+							}
+							onDone={load}
+						/>
+					</>
 				) : (
 					<div className="demo-alert">
 						<p className="m-0 text-sm">
-							{detail.manuscriptStatus === "pending"
-								? "稿件审核中，请耐心等待结果。"
-								: detail.projectStatus === "info_supplement" ||
-										detail.projectStatus === "completed"
-									? "稿件已通过，进入后续阶段。"
-									: "当前阶段不可提交稿件。"}
+							{detail.copyUnderReview
+								? "重交副本审核中，请等待审核结果。"
+								: detail.manuscriptStatus === "pending"
+									? "稿件审核中，请耐心等待结果。"
+									: detail.projectStatus === "completed"
+										? "项目已完成。"
+										: "当前阶段不可提交稿件。"}
 						</p>
 					</div>
 				)}
@@ -151,11 +165,11 @@ function ManuscriptPage() {
 
 function ManuscriptForm({
 	projectId,
-	resubmit,
+	submitLabel,
 	onDone,
 }: {
 	projectId: string;
-	resubmit: boolean;
+	submitLabel: string;
 	onDone: () => void;
 }) {
 	const [coverKey, setCoverKey] = useState("");
@@ -310,7 +324,7 @@ function ManuscriptForm({
 				disabled={submitting || uploading}
 				className="demo-button"
 			>
-				{submitting ? "提交中..." : resubmit ? "重新提交稿件" : "提交稿件"}
+				{submitting ? "提交中..." : submitLabel}
 			</button>
 		</form>
 	);

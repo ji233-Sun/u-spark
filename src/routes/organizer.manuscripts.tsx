@@ -146,6 +146,9 @@ function ManuscriptReviewCard({
 				<div>
 					<div className="mb-2 flex flex-wrap items-center gap-2">
 						<span className="demo-pill text-xs">第 {item.version} 版</span>
+						{item.isResubmitCopy && (
+							<span className="demo-pill text-xs text-amber-700">重提副本</span>
+						)}
 						<span className="demo-muted text-xs">
 							提交于 {formatDate(new Date(item.submittedAt))}
 						</span>

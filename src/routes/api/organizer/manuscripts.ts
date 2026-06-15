@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { user } from "#/db/auth-schema";
 import {
 	activity,
@@ -16,6 +16,7 @@ import {
 	MANUSCRIPT_APPROVE_PROJECT_FLOW,
 	MANUSCRIPT_REVIEW_TARGET,
 	type ManuscriptReviewDecision,
+	manuscriptReviewKind,
 } from "#/lib/celebration/manuscript";
 import { requireActivityManager } from "#/lib/celebration/server-guards";
 import {
@@ -37,6 +38,7 @@ export type OrganizerManuscriptRecord = {
 	creatorName: string;
 	creatorEmail: string;
 	version: number;
+	isResubmitCopy: boolean; // T23：信息补充阶段的重提副本
 	coverUrl: string | null;
 	driveLink: string | null;
 	extractCode: string | null;
@@ -74,6 +76,8 @@ async function listManuscripts({ request }: { request: Request }) {
 		projectId: project.id,
 		manuscriptId: manuscript.id,
 		projectTitle: project.title,
+		projectStatus: project.status,
+		currentVersion: manuscript.currentVersion,
 		activityId: activity.id,
 		activityTitle: activity.title,
 		creatorName: user.name,
@@ -86,12 +90,11 @@ async function listManuscripts({ request }: { request: Request }) {
 		submittedAt: manuscriptVersion.submittedAt,
 	};
 
-	// 待审稿件 = project 在 manuscript_submitted 且 manuscript 主审核态 pending；
-	// 取当前版本（version = manuscript.currentVersion）内容。
+	// 待审 = 存在 pending 版本（涵盖首次提交、被拒重提、T23 信息补充副本），
+	// 限定项目处于稿件提交 / 信息补充阶段。
 	const conditions = and(
-		eq(project.status, "manuscript_submitted"),
-		eq(manuscript.status, "pending"),
-		eq(manuscriptVersion.version, manuscript.currentVersion),
+		eq(manuscriptVersion.status, "pending"),
+		inArray(project.status, ["manuscript_submitted", "info_supplement"]),
 	);
 
 	const rows =
@@ -134,6 +137,9 @@ async function listManuscripts({ request }: { request: Request }) {
 		creatorName: row.creatorName,
 		creatorEmail: row.creatorEmail,
 		version: row.version,
+		isResubmitCopy:
+			row.projectStatus === "info_supplement" &&
+			row.version > row.currentVersion,
 		coverUrl: row.coverImageUrl ? signedFileUrl(row.coverImageUrl) : null,
 		driveLink: row.driveLink,
 		extractCode: row.extractCode,
@@ -180,7 +186,6 @@ async function reviewManuscript({ request }: { request: Request }) {
 			activityId: project.activityId,
 			creatorEmail: user.email,
 			manuscriptId: manuscript.id,
-			manuscriptStatus: manuscript.status,
 			currentVersion: manuscript.currentVersion,
 		})
 		.from(manuscript)
@@ -202,11 +207,31 @@ async function reviewManuscript({ request }: { request: Request }) {
 		throw err;
 	}
 
-	// 仅 manuscript_submitted + pending 可审核（避免对已决态重复操作）。
-	if (
-		row.projectStatus !== "manuscript_submitted" ||
-		row.manuscriptStatus !== "pending"
-	) {
+	// 取当前 pending 版本（首次/重提/副本统一以版本为审核单元）。
+	const [pending] = await db
+		.select({ id: manuscriptVersion.id, version: manuscriptVersion.version })
+		.from(manuscriptVersion)
+		.where(
+			and(
+				eq(manuscriptVersion.manuscriptId, row.manuscriptId),
+				eq(manuscriptVersion.status, "pending"),
+			),
+		)
+		.orderBy(desc(manuscriptVersion.version))
+		.limit(1);
+	if (!pending) {
+		return Response.json(
+			{ ok: false, error: "无待审核版本。" },
+			{ status: 400 },
+		);
+	}
+
+	const kind = manuscriptReviewKind(
+		row.projectStatus as ProjectStatus,
+		pending.version,
+		row.currentVersion,
+	);
+	if (!kind) {
 		return Response.json(
 			{ ok: false, error: "当前稿件状态不可审核。" },
 			{ status: 400 },
@@ -217,11 +242,8 @@ async function reviewManuscript({ request }: { request: Request }) {
 
 	try {
 		await db.transaction(async (tx) => {
-			assertManuscriptTransition(
-				row.manuscriptStatus as ManuscriptStatus,
-				target,
-			);
-			// 记录当前版本审核结果（理由对用户可见）。
+			assertManuscriptTransition("pending", target);
+			// 记录被审版本结果（理由对用户可见）。
 			await tx
 				.update(manuscriptVersion)
 				.set({
@@ -230,29 +252,33 @@ async function reviewManuscript({ request }: { request: Request }) {
 					reviewedBy: actor.userId,
 					reviewedAt: new Date(),
 				})
-				.where(
-					and(
-						eq(manuscriptVersion.manuscriptId, row.manuscriptId),
-						eq(manuscriptVersion.version, row.currentVersion),
-					),
-				);
-			await tx
-				.update(manuscript)
-				.set({ status: target, updatedAt: new Date() })
-				.where(eq(manuscript.id, row.manuscriptId));
+				.where(eq(manuscriptVersion.id, pending.id));
 
-			// 通过 → 推进主轴至信息补充；拒绝 / 打回主轴不变（可打回重交）。
-			if (decision === "approve") {
-				let from = row.projectStatus as ProjectStatus;
-				for (const next of MANUSCRIPT_APPROVE_PROJECT_FLOW) {
-					assertProjectTransition(from, next);
-					from = next;
-				}
+			if (kind === "initial") {
+				// 首次审核：联动 manuscript 主审核态 + 主轴。
 				await tx
-					.update(project)
-					.set({ status: "info_supplement", updatedAt: new Date() })
-					.where(eq(project.id, row.projectId));
+					.update(manuscript)
+					.set({ status: target, updatedAt: new Date() })
+					.where(eq(manuscript.id, row.manuscriptId));
+				if (decision === "approve") {
+					let from = row.projectStatus as ProjectStatus;
+					for (const next of MANUSCRIPT_APPROVE_PROJECT_FLOW) {
+						assertProjectTransition(from, next);
+						from = next;
+					}
+					await tx
+						.update(project)
+						.set({ status: "info_supplement", updatedAt: new Date() })
+						.where(eq(project.id, row.projectId));
+				}
+			} else if (decision === "approve") {
+				// T23 副本通过：替换提交信息（指向新版本），主审核态 / 主轴不变。
+				await tx
+					.update(manuscript)
+					.set({ currentVersion: pending.version, updatedAt: new Date() })
+					.where(eq(manuscript.id, row.manuscriptId));
 			}
+			// T23 副本拒绝 / 打回：仅版本记拒，保持原过审态（manuscript 不变）。
 		});
 	} catch (err) {
 		if (err instanceof InvalidTransitionError) {
@@ -271,11 +297,13 @@ async function reviewManuscript({ request }: { request: Request }) {
 			template: "manuscript_approved",
 			data: { projectTitle: row.projectTitle },
 		});
-		await sendMail({
-			to: row.creatorEmail,
-			template: "info_supplement_requested",
-			data: { projectTitle: row.projectTitle },
-		});
+		if (kind === "initial") {
+			await sendMail({
+				to: row.creatorEmail,
+				template: "info_supplement_requested",
+				data: { projectTitle: row.projectTitle },
+			});
+		}
 	} else {
 		await sendMail({
 			to: row.creatorEmail,
@@ -287,5 +315,5 @@ async function reviewManuscript({ request }: { request: Request }) {
 		});
 	}
 
-	return Response.json({ ok: true, status: target });
+	return Response.json({ ok: true, status: target, kind });
 }
