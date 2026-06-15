@@ -69,7 +69,7 @@ function ForgotPassword() {
 
 				<div className="mt-5 text-center">
 					<Link
-						to="/demo/better-auth"
+						to="/auth"
 						className="demo-muted text-sm no-underline transition-colors hover:text-[var(--sea-ink)]"
 					>
 						返回登录
