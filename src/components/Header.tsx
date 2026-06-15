@@ -94,6 +94,13 @@ export default function Header() {
 					>
 						Surveys
 					</Link>
+					<Link
+						to="/admin"
+						className="nav-link"
+						activeProps={{ className: "nav-link is-active" }}
+					>
+						Admin
+					</Link>
 					<a
 						href="https://tanstack.com/start/latest/docs/framework/react/overview"
 						className="nav-link"

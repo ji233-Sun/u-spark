@@ -307,6 +307,18 @@ export const formResponse = pgTable("form_response", {
 		.defaultNow(),
 });
 
+// 邮件模板覆盖（T28 管理员维护）：按 templateKey 覆盖内置注册表文案，
+// 文案用 {placeholder} 占位，发送时按 data 插值；无覆盖则回退内置模板。
+export const emailTemplate = pgTable("email_template", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	templateKey: text("template_key").notNull().unique(),
+	subject: text("subject").notNull(),
+	body: text("body").notNull(),
+	updatedBy: text("updated_by").references(() => user.id),
+	createdAt: createdAt(),
+	updatedAt: updatedAt(),
+});
+
 export const emailLog = pgTable("email_log", {
 	id: uuid("id").defaultRandom().primaryKey(),
 	toEmail: text("to_email").notNull(),

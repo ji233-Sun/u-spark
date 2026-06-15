@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
@@ -50,6 +51,11 @@ import { Route as ApiOrganizerActivityConfigRouteImport } from './routes/api/org
 import { Route as ApiOrganizerActivitiesRouteImport } from './routes/api/organizer/activities'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
+import { Route as ApiAdminPresetsRouteImport } from './routes/api/admin/presets'
+import { Route as ApiAdminOrganizersRouteImport } from './routes/api/admin/organizers'
+import { Route as ApiAdminEmailTemplatesRouteImport } from './routes/api/admin/email-templates'
+import { Route as ApiAdminActivitiesRouteImport } from './routes/api/admin/activities'
 import { Route as ActivitiesActivityIdProposalRouteImport } from './routes/activities_.$activityId.proposal'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -65,6 +71,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivitiesRoute = ActivitiesRouteImport.update({
@@ -263,6 +274,31 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
+  id: '/api/admin/users',
+  path: '/api/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminPresetsRoute = ApiAdminPresetsRouteImport.update({
+  id: '/api/admin/presets',
+  path: '/api/admin/presets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminOrganizersRoute = ApiAdminOrganizersRouteImport.update({
+  id: '/api/admin/organizers',
+  path: '/api/admin/organizers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminEmailTemplatesRoute = ApiAdminEmailTemplatesRouteImport.update({
+  id: '/api/admin/email-templates',
+  path: '/api/admin/email-templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminActivitiesRoute = ApiAdminActivitiesRouteImport.update({
+  id: '/api/admin/activities',
+  path: '/api/admin/activities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ActivitiesActivityIdProposalRoute =
   ActivitiesActivityIdProposalRouteImport.update({
     id: '/proposal',
@@ -275,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/activities': typeof ActivitiesRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -294,6 +331,11 @@ export interface FileRoutesByFullPath {
   '/organizer/surveys': typeof OrganizerSurveysRoute
   '/surveys/$surveyId': typeof SurveysSurveyIdRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
+  '/api/admin/activities': typeof ApiAdminActivitiesRoute
+  '/api/admin/email-templates': typeof ApiAdminEmailTemplatesRoute
+  '/api/admin/organizers': typeof ApiAdminOrganizersRoute
+  '/api/admin/presets': typeof ApiAdminPresetsRoute
+  '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
@@ -319,6 +361,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/activities': typeof ActivitiesRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -338,6 +381,11 @@ export interface FileRoutesByTo {
   '/organizer/surveys': typeof OrganizerSurveysRoute
   '/surveys/$surveyId': typeof SurveysSurveyIdRoute
   '/activities/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
+  '/api/admin/activities': typeof ApiAdminActivitiesRoute
+  '/api/admin/email-templates': typeof ApiAdminEmailTemplatesRoute
+  '/api/admin/organizers': typeof ApiAdminOrganizersRoute
+  '/api/admin/presets': typeof ApiAdminPresetsRoute
+  '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
@@ -364,6 +412,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
   '/activities': typeof ActivitiesRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -383,6 +432,11 @@ export interface FileRoutesById {
   '/organizer/surveys': typeof OrganizerSurveysRoute
   '/surveys/$surveyId': typeof SurveysSurveyIdRoute
   '/activities_/$activityId/proposal': typeof ActivitiesActivityIdProposalRoute
+  '/api/admin/activities': typeof ApiAdminActivitiesRoute
+  '/api/admin/email-templates': typeof ApiAdminEmailTemplatesRoute
+  '/api/admin/organizers': typeof ApiAdminOrganizersRoute
+  '/api/admin/presets': typeof ApiAdminPresetsRoute
+  '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
@@ -410,6 +464,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/account'
     | '/activities'
+    | '/admin'
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
@@ -429,6 +484,11 @@ export interface FileRouteTypes {
     | '/organizer/surveys'
     | '/surveys/$surveyId'
     | '/activities/$activityId/proposal'
+    | '/api/admin/activities'
+    | '/api/admin/email-templates'
+    | '/api/admin/organizers'
+    | '/api/admin/presets'
+    | '/api/admin/users'
     | '/api/auth/$'
     | '/api/my/proposals'
     | '/api/organizer/activities'
@@ -454,6 +514,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/account'
     | '/activities'
+    | '/admin'
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
@@ -473,6 +534,11 @@ export interface FileRouteTypes {
     | '/organizer/surveys'
     | '/surveys/$surveyId'
     | '/activities/$activityId/proposal'
+    | '/api/admin/activities'
+    | '/api/admin/email-templates'
+    | '/api/admin/organizers'
+    | '/api/admin/presets'
+    | '/api/admin/users'
     | '/api/auth/$'
     | '/api/my/proposals'
     | '/api/organizer/activities'
@@ -498,6 +564,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/account'
     | '/activities'
+    | '/admin'
     | '/auth'
     | '/forgot-password'
     | '/reset-password'
@@ -517,6 +584,11 @@ export interface FileRouteTypes {
     | '/organizer/surveys'
     | '/surveys/$surveyId'
     | '/activities_/$activityId/proposal'
+    | '/api/admin/activities'
+    | '/api/admin/email-templates'
+    | '/api/admin/organizers'
+    | '/api/admin/presets'
+    | '/api/admin/users'
     | '/api/auth/$'
     | '/api/my/proposals'
     | '/api/organizer/activities'
@@ -543,6 +615,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AccountRoute: typeof AccountRoute
   ActivitiesRoute: typeof ActivitiesRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -561,6 +634,11 @@ export interface RootRouteChildren {
   OrganizerProposalsRoute: typeof OrganizerProposalsRoute
   OrganizerSurveysRoute: typeof OrganizerSurveysRoute
   SurveysSurveyIdRoute: typeof SurveysSurveyIdRoute
+  ApiAdminActivitiesRoute: typeof ApiAdminActivitiesRoute
+  ApiAdminEmailTemplatesRoute: typeof ApiAdminEmailTemplatesRoute
+  ApiAdminOrganizersRoute: typeof ApiAdminOrganizersRoute
+  ApiAdminPresetsRoute: typeof ApiAdminPresetsRoute
+  ApiAdminUsersRoute: typeof ApiAdminUsersRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiOrganizerActivitiesRoute: typeof ApiOrganizerActivitiesRoute
@@ -603,6 +681,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activities': {
@@ -871,6 +956,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/users': {
+      id: '/api/admin/users'
+      path: '/api/admin/users'
+      fullPath: '/api/admin/users'
+      preLoaderRoute: typeof ApiAdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/presets': {
+      id: '/api/admin/presets'
+      path: '/api/admin/presets'
+      fullPath: '/api/admin/presets'
+      preLoaderRoute: typeof ApiAdminPresetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/organizers': {
+      id: '/api/admin/organizers'
+      path: '/api/admin/organizers'
+      fullPath: '/api/admin/organizers'
+      preLoaderRoute: typeof ApiAdminOrganizersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/email-templates': {
+      id: '/api/admin/email-templates'
+      path: '/api/admin/email-templates'
+      fullPath: '/api/admin/email-templates'
+      preLoaderRoute: typeof ApiAdminEmailTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/activities': {
+      id: '/api/admin/activities'
+      path: '/api/admin/activities'
+      fullPath: '/api/admin/activities'
+      preLoaderRoute: typeof ApiAdminActivitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/activities_/$activityId/proposal': {
       id: '/activities_/$activityId/proposal'
       path: '/proposal'
@@ -897,6 +1017,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AccountRoute: AccountRoute,
   ActivitiesRoute: ActivitiesRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
@@ -915,6 +1036,11 @@ const rootRouteChildren: RootRouteChildren = {
   OrganizerProposalsRoute: OrganizerProposalsRoute,
   OrganizerSurveysRoute: OrganizerSurveysRoute,
   SurveysSurveyIdRoute: SurveysSurveyIdRoute,
+  ApiAdminActivitiesRoute: ApiAdminActivitiesRoute,
+  ApiAdminEmailTemplatesRoute: ApiAdminEmailTemplatesRoute,
+  ApiAdminOrganizersRoute: ApiAdminOrganizersRoute,
+  ApiAdminPresetsRoute: ApiAdminPresetsRoute,
+  ApiAdminUsersRoute: ApiAdminUsersRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiOrganizerActivitiesRoute: ApiOrganizerActivitiesRoute,

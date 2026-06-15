@@ -84,3 +84,13 @@ export function renderTemplate(
 export function isKnownTemplate(key: string): key is EmailTemplate {
 	return key in TEMPLATES;
 }
+
+// 全部内置模板 key（供管理员后台列出可覆盖模板）。
+export const EMAIL_TEMPLATE_KEYS = Object.keys(TEMPLATES) as EmailTemplate[];
+
+// 占位插值：DB 覆盖模板用 {key} 占位，按 data 替换；缺失键替换为空串。
+export function interpolate(text: string, data: EmailTemplateData): string {
+	return text.replace(/\{(\w+)\}/g, (_, key: string) =>
+		data[key] != null ? String(data[key]) : "",
+	);
+}

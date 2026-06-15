@@ -1,13 +1,34 @@
 import { eq } from "drizzle-orm";
-import { emailLog } from "#/db/celebration-schema";
+import { emailLog, emailTemplate } from "#/db/celebration-schema";
 import { db } from "#/db/index";
 import { consoleProvider, type EmailProvider } from "./provider.ts";
 import { RateLimiter } from "./rate-limit.ts";
 import {
 	type EmailTemplate,
 	type EmailTemplateData,
+	interpolate,
+	type RenderedEmail,
 	renderTemplate,
 } from "./templates.ts";
+
+// 解析模板：优先用管理员维护的 DB 覆盖（{占位}插值），否则回退内置注册表（T28）。
+async function resolveTemplate(
+	template: EmailTemplate,
+	data: EmailTemplateData,
+): Promise<RenderedEmail> {
+	const [override] = await db
+		.select({ subject: emailTemplate.subject, body: emailTemplate.body })
+		.from(emailTemplate)
+		.where(eq(emailTemplate.templateKey, template))
+		.limit(1);
+	if (override) {
+		return {
+			subject: interpolate(override.subject, data),
+			body: interpolate(override.body, data),
+		};
+	}
+	return renderTemplate(template, data);
+}
 
 // 邮件统一入口（T05 #5）：渲染模板 → 限频 → 发送（带重试）→ 写 email_log。
 
@@ -36,18 +57,16 @@ export async function sendMail(
 
 	// 限频（防枚举 / 爆破）：超限直接记日志并拒绝。
 	if (!limiter.check(to, now)) {
-		await db
-			.insert(emailLog)
-			.values({
-				toEmail: to,
-				template,
-				status: "failed",
-				error: "rate_limited",
-			});
+		await db.insert(emailLog).values({
+			toEmail: to,
+			template,
+			status: "failed",
+			error: "rate_limited",
+		});
 		return { ok: false };
 	}
 
-	const { subject, body } = renderTemplate(template, data);
+	const { subject, body } = await resolveTemplate(template, data);
 
 	// 入队日志（queued）。
 	const [log] = await db
@@ -77,7 +96,7 @@ export async function sendMail(
 	return { ok: false };
 }
 
+export type { EmailMessage, EmailProvider, SendResult } from "./provider.ts";
 export { consoleProvider } from "./provider.ts";
-export type { EmailProvider, EmailMessage, SendResult } from "./provider.ts";
-export { isKnownTemplate, renderTemplate } from "./templates.ts";
 export type { EmailTemplate } from "./templates.ts";
+export { isKnownTemplate, renderTemplate } from "./templates.ts";
