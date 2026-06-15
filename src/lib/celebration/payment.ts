@@ -39,3 +39,11 @@ export type PaymentStatus = "pending" | "paid";
 export function isPaymentStatus(value: unknown): value is PaymentStatus {
 	return value === "pending" || value === "paid";
 }
+
+// 收款码上传开放条件（T22）：仅当已核定稿酬、且信息补充 DDL 未过。
+export function canUploadPaymentCode(
+	remunerationAssigned: boolean,
+	infoDeadlinePassed: boolean,
+): boolean {
+	return remunerationAssigned && !infoDeadlinePassed;
+}

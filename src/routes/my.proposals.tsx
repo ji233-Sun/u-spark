@@ -158,6 +158,16 @@ function MyProposalsPage() {
 													作者 / 收件
 												</Link>
 											)}
+											{(projectStatus === "info_supplement" ||
+												projectStatus === "completed") && (
+												<Link
+													to="/projects/$projectId/payment"
+													params={{ projectId: proposal.id }}
+													className="demo-button demo-button-secondary no-underline"
+												>
+													收款码
+												</Link>
+											)}
 											{canRestartProposal(projectStatus) && (
 												<Link
 													to="/activities/$activityId/proposal"

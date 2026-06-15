@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	canAssignRemuneration,
+	canUploadPaymentCode,
 	isPaymentStatus,
 	validateRemunerationAmount,
 } from "./payment.ts";
@@ -44,5 +45,17 @@ describe("发放状态", () => {
 		expect(isPaymentStatus("pending")).toBe(true);
 		expect(isPaymentStatus("paid")).toBe(true);
 		expect(isPaymentStatus("x")).toBe(false);
+	});
+});
+
+describe("收款码上传条件", () => {
+	it("已核定稿酬且 DDL 未过方可上传", () => {
+		expect(canUploadPaymentCode(true, false)).toBe(true);
+	});
+	it("未核定稿酬不可上传", () => {
+		expect(canUploadPaymentCode(false, false)).toBe(false);
+	});
+	it("信息补充 DDL 后不可上传", () => {
+		expect(canUploadPaymentCode(true, true)).toBe(false);
 	});
 });

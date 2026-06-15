@@ -26,9 +26,11 @@ import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as ApiUploadsRouteImport } from './routes/api/uploads'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
+import { Route as ProjectsProjectIdPaymentRouteImport } from './routes/projects_.$projectId.payment'
 import { Route as ProjectsProjectIdManuscriptRouteImport } from './routes/projects_.$projectId.manuscript'
 import { Route as ProjectsProjectIdAuthorsRouteImport } from './routes/projects_.$projectId.authors'
 import { Route as ApiProjectsProposalsRouteImport } from './routes/api/projects/proposals'
+import { Route as ApiProjectsPaymentCodeRouteImport } from './routes/api/projects/payment-code'
 import { Route as ApiProjectsManuscriptsRouteImport } from './routes/api/projects/manuscripts'
 import { Route as ApiProjectsAuthorsRouteImport } from './routes/api/projects/authors'
 import { Route as ApiPasswordResetRequestRouteImport } from './routes/api/password-reset/request'
@@ -124,6 +126,12 @@ const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
   path: '/activities/$activityId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsProjectIdPaymentRoute =
+  ProjectsProjectIdPaymentRouteImport.update({
+    id: '/projects_/$projectId/payment',
+    path: '/projects/$projectId/payment',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProjectsProjectIdManuscriptRoute =
   ProjectsProjectIdManuscriptRouteImport.update({
     id: '/projects_/$projectId/manuscript',
@@ -139,6 +147,11 @@ const ProjectsProjectIdAuthorsRoute =
 const ApiProjectsProposalsRoute = ApiProjectsProposalsRouteImport.update({
   id: '/api/projects/proposals',
   path: '/api/projects/proposals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsPaymentCodeRoute = ApiProjectsPaymentCodeRouteImport.update({
+  id: '/api/projects/payment-code',
+  path: '/api/projects/payment-code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProjectsManuscriptsRoute = ApiProjectsManuscriptsRouteImport.update({
@@ -215,9 +228,11 @@ export interface FileRoutesByFullPath {
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
+  '/api/projects/payment-code': typeof ApiProjectsPaymentCodeRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
   '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
+  '/projects/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -246,9 +261,11 @@ export interface FileRoutesByTo {
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
+  '/api/projects/payment-code': typeof ApiProjectsPaymentCodeRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
   '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
+  '/projects/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -278,9 +295,11 @@ export interface FileRoutesById {
   '/api/password-reset/request': typeof ApiPasswordResetRequestRoute
   '/api/projects/authors': typeof ApiProjectsAuthorsRoute
   '/api/projects/manuscripts': typeof ApiProjectsManuscriptsRoute
+  '/api/projects/payment-code': typeof ApiProjectsPaymentCodeRoute
   '/api/projects/proposals': typeof ApiProjectsProposalsRoute
   '/projects_/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects_/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
+  '/projects_/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -311,9 +330,11 @@ export interface FileRouteTypes {
     | '/api/password-reset/request'
     | '/api/projects/authors'
     | '/api/projects/manuscripts'
+    | '/api/projects/payment-code'
     | '/api/projects/proposals'
     | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
+    | '/projects/$projectId/payment'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -342,9 +363,11 @@ export interface FileRouteTypes {
     | '/api/password-reset/request'
     | '/api/projects/authors'
     | '/api/projects/manuscripts'
+    | '/api/projects/payment-code'
     | '/api/projects/proposals'
     | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
+    | '/projects/$projectId/payment'
   id:
     | '__root__'
     | '/'
@@ -373,9 +396,11 @@ export interface FileRouteTypes {
     | '/api/password-reset/request'
     | '/api/projects/authors'
     | '/api/projects/manuscripts'
+    | '/api/projects/payment-code'
     | '/api/projects/proposals'
     | '/projects_/$projectId/authors'
     | '/projects_/$projectId/manuscript'
+    | '/projects_/$projectId/payment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -404,9 +429,11 @@ export interface RootRouteChildren {
   ApiPasswordResetRequestRoute: typeof ApiPasswordResetRequestRoute
   ApiProjectsAuthorsRoute: typeof ApiProjectsAuthorsRoute
   ApiProjectsManuscriptsRoute: typeof ApiProjectsManuscriptsRoute
+  ApiProjectsPaymentCodeRoute: typeof ApiProjectsPaymentCodeRoute
   ApiProjectsProposalsRoute: typeof ApiProjectsProposalsRoute
   ProjectsProjectIdAuthorsRoute: typeof ProjectsProjectIdAuthorsRoute
   ProjectsProjectIdManuscriptRoute: typeof ProjectsProjectIdManuscriptRoute
+  ProjectsProjectIdPaymentRoute: typeof ProjectsProjectIdPaymentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -530,6 +557,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivitiesActivityIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects_/$projectId/payment': {
+      id: '/projects_/$projectId/payment'
+      path: '/projects/$projectId/payment'
+      fullPath: '/projects/$projectId/payment'
+      preLoaderRoute: typeof ProjectsProjectIdPaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects_/$projectId/manuscript': {
       id: '/projects_/$projectId/manuscript'
       path: '/projects/$projectId/manuscript'
@@ -549,6 +583,13 @@ declare module '@tanstack/react-router' {
       path: '/api/projects/proposals'
       fullPath: '/api/projects/proposals'
       preLoaderRoute: typeof ApiProjectsProposalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects/payment-code': {
+      id: '/api/projects/payment-code'
+      path: '/api/projects/payment-code'
+      fullPath: '/api/projects/payment-code'
+      preLoaderRoute: typeof ApiProjectsPaymentCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/projects/manuscripts': {
@@ -654,9 +695,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPasswordResetRequestRoute: ApiPasswordResetRequestRoute,
   ApiProjectsAuthorsRoute: ApiProjectsAuthorsRoute,
   ApiProjectsManuscriptsRoute: ApiProjectsManuscriptsRoute,
+  ApiProjectsPaymentCodeRoute: ApiProjectsPaymentCodeRoute,
   ApiProjectsProposalsRoute: ApiProjectsProposalsRoute,
   ProjectsProjectIdAuthorsRoute: ProjectsProjectIdAuthorsRoute,
   ProjectsProjectIdManuscriptRoute: ProjectsProjectIdManuscriptRoute,
+  ProjectsProjectIdPaymentRoute: ProjectsProjectIdPaymentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
