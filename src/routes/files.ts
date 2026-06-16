@@ -5,7 +5,7 @@ import { storageSecret } from "#/lib/storage/server-url";
 // 私有图片访问（T06 签名机制落地）：仅凭服务端签发的 HMAC 签名 + 未过期方可读取，
 // 非授权方无法直接拼 URL 访问收款码 / 封面等敏感图。签发见 signedFileUrl。
 
-export const Route = createFileRoute("/files/$")({
+export const Route = createFileRoute("/files")({
 	server: {
 		handlers: {
 			GET: serveSignedFile,
@@ -15,11 +15,7 @@ export const Route = createFileRoute("/files/$")({
 
 async function serveSignedFile({ request }: { request: Request }) {
 	const url = new URL(request.url);
-	const marker = "/files/";
-	const encoded = url.pathname.slice(
-		url.pathname.indexOf(marker) + marker.length,
-	);
-	const key = decodeURIComponent(encoded);
+	const key = url.searchParams.get("key") ?? "";
 
 	const expiresAt = Number(url.searchParams.get("expires"));
 	const signature = url.searchParams.get("sig") ?? "";

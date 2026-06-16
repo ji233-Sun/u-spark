@@ -1,4 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Link,
+	Outlet,
+	useRouterState,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { and, eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
@@ -142,12 +147,17 @@ function toActivityDetail(
 
 function ActivityDetailPage() {
 	const record = Route.useLoaderData();
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
 	const [now, setNow] = useState(() => new Date());
 
 	useEffect(() => {
 		const id = window.setInterval(() => setNow(new Date()), 30 * 1000);
 		return () => window.clearInterval(id);
 	}, []);
+
+	if (pathname.endsWith("/proposal")) {
+		return <Outlet />;
+	}
 
 	if (!record) {
 		return (
@@ -226,12 +236,13 @@ function ActivityDetailPage() {
 					</div>
 
 					{participation.enabled ? (
-						<a
-							href={`/activities/${detail.id}/proposal`}
+						<Link
+							to="/activities/$activityId/proposal"
+							params={{ activityId: detail.id }}
 							className="demo-button w-full no-underline"
 						>
 							参与活动
-						</a>
+						</Link>
 					) : (
 						<button type="button" disabled className="demo-button w-full">
 							{participation.reason}

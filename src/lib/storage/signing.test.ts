@@ -62,6 +62,8 @@ describe("签名 URL（私有图片访问）", () => {
 
 	it("buildSignedPath 含 key/expires/sig", () => {
 		const path = buildSignedPath(KEY, 10_000, SECRET);
+		expect(path).toContain("/files?");
+		expect(path).toContain("key=payment-codes%2Fp1.png");
 		expect(path).toContain("expires=10000");
 		expect(path).toContain("sig=");
 	});

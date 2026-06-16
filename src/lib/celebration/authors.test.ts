@@ -9,24 +9,38 @@ import {
 describe("作者信息校验", () => {
 	it("昵称必填", () => {
 		expect(validateAuthorInput({}).displayName).toBeDefined();
-		expect(hasAuthorErrors(validateAuthorInput({ displayName: "阿狸" }))).toBe(
-			false,
-		);
+		expect(
+			hasAuthorErrors(
+				validateAuthorInput({
+					displayName: "阿狸",
+					bilibiliUid: "12345",
+					duty: "剪辑",
+				}),
+			),
+		).toBe(false);
 	});
 
-	it("B站 UID 须为纯数字", () => {
+	it("B站 UID 必填且须为纯数字", () => {
+		expect(
+			validateAuthorInput({ displayName: "阿狸" }).bilibiliUid,
+		).toBeDefined();
 		expect(
 			validateAuthorInput({ displayName: "阿狸", bilibiliUid: "abc" })
 				.bilibiliUid,
 		).toBeDefined();
 		expect(
 			hasAuthorErrors(
-				validateAuthorInput({ displayName: "阿狸", bilibiliUid: "12345" }),
+				validateAuthorInput({
+					displayName: "阿狸",
+					bilibiliUid: "12345",
+					duty: "剪辑",
+				}),
 			),
 		).toBe(false);
 	});
 
-	it("职能选填但限长", () => {
+	it("职能必填且限长", () => {
+		expect(validateAuthorInput({ displayName: "阿狸" }).duty).toBeDefined();
 		expect(
 			validateAuthorInput({ displayName: "阿狸", duty: "x".repeat(51) }).duty,
 		).toBeDefined();

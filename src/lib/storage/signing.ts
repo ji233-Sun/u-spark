@@ -20,7 +20,12 @@ export function buildSignedPath(
 	secret: string,
 ): string {
 	const sig = signKey(key, expiresAt, secret);
-	return `/files/${encodeURIComponent(key)}?expires=${expiresAt}&sig=${sig}`;
+	const params = new URLSearchParams({
+		key,
+		expires: String(expiresAt),
+		sig,
+	});
+	return `/files?${params.toString()}`;
 }
 
 export type VerifyResult = { ok: true } | { ok: false; reason: string };

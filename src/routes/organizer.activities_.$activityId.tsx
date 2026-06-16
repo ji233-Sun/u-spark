@@ -1,9 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 import { FormSchemaBuilder } from "#/components/forms/FormSchemaBuilder";
+import { ManuscriptStatusBadge, ProjectStatusBadge } from "#/components/ui";
 import type { FormQuestion } from "#/db/celebration-schema";
 import { authClient } from "#/lib/auth-client";
+import {
+	MANUSCRIPT_STATUS_LABELS,
+	PROJECT_STATUS_LABELS,
+} from "#/lib/celebration/labels";
+import type {
+	ManuscriptStatus,
+	ProjectStatus,
+} from "#/lib/celebration/state-machine";
 import type { ActivityConfig } from "./api/organizer/activity-config";
+import type { OrganizerActivityProjectRecord } from "./api/organizer/activity-projects";
 
 export const Route = createFileRoute("/organizer/activities_/$activityId")({
 	component: ActivityConfigPage,
@@ -19,20 +29,41 @@ function ActivityConfigPage() {
 	const { activityId } = Route.useParams();
 	const { data: session, isPending } = authClient.useSession();
 	const [config, setConfig] = useState<ActivityConfig | null>(null);
+	const [projects, setProjects] = useState<OrganizerActivityProjectRecord[]>(
+		[],
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 
 	const load = () => {
 		setLoading(true);
-		void fetch(`/api/organizer/activity-config?activityId=${activityId}`)
-			.then(async (res) => {
-				const json = (await res.json()) as {
-					ok: boolean;
-					error?: string;
-					config?: ActivityConfig;
-				};
-				if (!res.ok || !json.ok) throw new Error(json.error ?? "加载失败");
-				setConfig(json.config ?? null);
+		void Promise.all([
+			fetch(`/api/organizer/activity-config?activityId=${activityId}`).then(
+				async (res) => {
+					const json = (await res.json()) as {
+						ok: boolean;
+						error?: string;
+						config?: ActivityConfig;
+					};
+					if (!res.ok || !json.ok) throw new Error(json.error ?? "加载失败");
+					return json.config ?? null;
+				},
+			),
+			fetch(`/api/organizer/activity-projects?activityId=${activityId}`).then(
+				async (res) => {
+					const json = (await res.json()) as {
+						ok: boolean;
+						error?: string;
+						projects?: OrganizerActivityProjectRecord[];
+					};
+					if (!res.ok || !json.ok) throw new Error(json.error ?? "加载失败");
+					return json.projects ?? [];
+				},
+			),
+		])
+			.then(([nextConfig, nextProjects]) => {
+				setConfig(nextConfig);
+				setProjects(nextProjects);
 				setError("");
 			})
 			.catch((err) => setError(err instanceof Error ? err.message : "加载失败"))
@@ -84,6 +115,7 @@ function ActivityConfigPage() {
 				<h1 className="demo-title">活动配置</h1>
 			</header>
 
+			<ProjectOverviewSection projects={projects} />
 			<BasicsSection config={config} activityId={activityId} onSaved={load} />
 			<FormBuilderSection
 				config={config}
@@ -91,6 +123,207 @@ function ActivityConfigPage() {
 				onSaved={load}
 			/>
 		</main>
+	);
+}
+
+const PROJECT_FILTERS = [
+	"all",
+	"proposal_submitted",
+	"proposal_approved",
+	"proposal_rejected",
+	"manuscript_submitted",
+	"manuscript_approved",
+	"info_supplement",
+	"completed",
+	"withdrawn",
+] as const satisfies readonly ("all" | ProjectStatus)[];
+
+const MANUSCRIPT_FILTERS = [
+	"all",
+	"none",
+	"pending",
+	"approved",
+	"revision_requested",
+	"rejected",
+] as const satisfies readonly ("all" | "none" | ManuscriptStatus)[];
+
+function ProjectOverviewSection({
+	projects,
+}: {
+	projects: OrganizerActivityProjectRecord[];
+}) {
+	const [query, setQuery] = useState("");
+	const [projectStatus, setProjectStatus] =
+		useState<(typeof PROJECT_FILTERS)[number]>("all");
+	const [manuscriptStatus, setManuscriptStatus] =
+		useState<(typeof MANUSCRIPT_FILTERS)[number]>("all");
+
+	const normalizedQuery = query.trim().toLowerCase();
+	const filtered = projects.filter((item) => {
+		const matchesQuery =
+			!normalizedQuery ||
+			[item.projectTitle, item.creatorName, item.creatorEmail]
+				.join(" ")
+				.toLowerCase()
+				.includes(normalizedQuery);
+		const matchesProjectStatus =
+			projectStatus === "all" || item.projectStatus === projectStatus;
+		const matchesManuscriptStatus =
+			manuscriptStatus === "all" ||
+			(manuscriptStatus === "none"
+				? item.manuscriptStatus === null
+				: item.manuscriptStatus === manuscriptStatus ||
+					item.latestVersionStatus === manuscriptStatus);
+		return matchesQuery && matchesProjectStatus && matchesManuscriptStatus;
+	});
+
+	const pendingCount = projects.filter(
+		(item) =>
+			item.projectStatus === "proposal_submitted" ||
+			item.manuscriptStatus === "pending" ||
+			item.latestVersionStatus === "pending",
+	).length;
+
+	return (
+		<section className="demo-panel mb-6">
+			<div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+				<div>
+					<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
+						项目 / 稿件总览
+					</h2>
+					<p className="demo-muted mt-2 text-sm">
+						共 {projects.length} 个立项，{pendingCount} 个待处理。
+					</p>
+				</div>
+				<div className="grid gap-2 sm:grid-cols-[minmax(12rem,1fr)_10rem_10rem]">
+					<input
+						value={query}
+						onChange={(event) => setQuery(event.target.value)}
+						placeholder="搜索项目 / 提交人 / 邮箱"
+						className="demo-input h-10"
+					/>
+					<select
+						value={projectStatus}
+						onChange={(event) =>
+							setProjectStatus(
+								event.target.value as (typeof PROJECT_FILTERS)[number],
+							)
+						}
+						className="demo-input h-10"
+					>
+						{PROJECT_FILTERS.map((status) => (
+							<option key={status} value={status}>
+								{status === "all"
+									? "全部项目状态"
+									: PROJECT_STATUS_LABELS[status]}
+							</option>
+						))}
+					</select>
+					<select
+						value={manuscriptStatus}
+						onChange={(event) =>
+							setManuscriptStatus(
+								event.target.value as (typeof MANUSCRIPT_FILTERS)[number],
+							)
+						}
+						className="demo-input h-10"
+					>
+						{MANUSCRIPT_FILTERS.map((status) => (
+							<option key={status} value={status}>
+								{status === "all"
+									? "全部稿件状态"
+									: status === "none"
+										? "未提交稿件"
+										: MANUSCRIPT_STATUS_LABELS[status]}
+							</option>
+						))}
+					</select>
+				</div>
+			</div>
+
+			{filtered.length === 0 ? (
+				<div className="rounded-lg border border-[var(--line)] bg-[var(--chip-bg)] p-6 text-center">
+					<p className="demo-muted m-0 text-sm">没有匹配的立项。</p>
+				</div>
+			) : (
+				<div className="overflow-x-auto rounded-lg border border-[var(--line)]">
+					<table className="w-full min-w-[56rem] border-collapse text-sm">
+						<thead className="bg-[var(--chip-bg)] text-left text-[var(--muted)]">
+							<tr>
+								<th className="px-4 py-3 font-semibold">项目</th>
+								<th className="px-4 py-3 font-semibold">提交人</th>
+								<th className="px-4 py-3 font-semibold">项目状态</th>
+								<th className="px-4 py-3 font-semibold">稿件状态</th>
+								<th className="px-4 py-3 font-semibold">最新提交</th>
+								<th className="px-4 py-3 font-semibold">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{filtered.map((item) => (
+								<tr
+									key={item.projectId}
+									className="border-t border-[var(--line)] align-top"
+								>
+									<td className="px-4 py-3">
+										<p className="m-0 font-semibold text-[var(--sea-ink)]">
+											{item.projectTitle}
+										</p>
+										<p className="demo-muted m-0 mt-1 text-xs">
+											创建于 {formatDate(new Date(item.createdAt))}
+										</p>
+									</td>
+									<td className="px-4 py-3">
+										<p className="m-0">{item.creatorName}</p>
+										<p className="demo-muted m-0 mt-1 text-xs">
+											{item.creatorEmail}
+										</p>
+									</td>
+									<td className="px-4 py-3">
+										<ProjectStatusBadge status={item.projectStatus} />
+									</td>
+									<td className="px-4 py-3">
+										{item.manuscriptStatus ? (
+											<div className="flex flex-wrap items-center gap-2">
+												<ManuscriptStatusBadge status={item.manuscriptStatus} />
+												{item.latestVersionStatus &&
+													item.latestVersionStatus !==
+														item.manuscriptStatus && (
+														<ManuscriptStatusBadge
+															status={item.latestVersionStatus}
+														/>
+													)}
+												{item.latestVersion && (
+													<span className="demo-muted text-xs">
+														第 {item.latestVersion} 版
+													</span>
+												)}
+											</div>
+										) : (
+											<span className="demo-muted text-xs">未提交</span>
+										)}
+									</td>
+									<td className="px-4 py-3">
+										{item.latestSubmittedAt ? (
+											formatDate(new Date(item.latestSubmittedAt))
+										) : (
+											<span className="demo-muted text-xs">—</span>
+										)}
+									</td>
+									<td className="px-4 py-3">
+										<Link
+											to="/organizer/manuscripts"
+											className="text-[var(--lagoon-deep)] no-underline"
+										>
+											审核队列
+										</Link>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			)}
+		</section>
 	);
 }
 
@@ -348,4 +581,16 @@ function ConfigField({
 			{error && <p className="m-0 text-xs text-red-600">{error}</p>}
 		</div>
 	);
+}
+
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+	year: "numeric",
+	month: "2-digit",
+	day: "2-digit",
+	hour: "2-digit",
+	minute: "2-digit",
+});
+
+function formatDate(date: Date): string {
+	return dateFormatter.format(date);
 }

@@ -10,6 +10,15 @@ export const Route = createFileRoute("/admin")({
 	component: AdminPage,
 });
 
+type AdminSectionId =
+	| "admin-activities"
+	| "admin-presets"
+	| "admin-email-templates"
+	| "admin-users"
+	| "admin-reminders";
+
+const DEFAULT_ADMIN_SECTION: AdminSectionId = "admin-activities";
+
 function isAdminUser(u: unknown): boolean {
 	return (
 		typeof u === "object" &&
@@ -34,6 +43,18 @@ async function postJson(url: string, payload: unknown) {
 
 function AdminPage() {
 	const { data: session, isPending } = authClient.useSession();
+	const [activeSection, setActiveSection] = useState<AdminSectionId>(
+		DEFAULT_ADMIN_SECTION,
+	);
+
+	useEffect(() => {
+		const syncSection = () => {
+			setActiveSection(sectionFromHash(window.location.hash));
+		};
+		syncSection();
+		window.addEventListener("hashchange", syncSection);
+		return () => window.removeEventListener("hashchange", syncSection);
+	}, []);
 
 	if (isPending) {
 		return (
@@ -65,15 +86,36 @@ function AdminPage() {
 					创建活动并指派组织者、维护预设题库与邮件模板、管理全平台用户。
 				</p>
 			</header>
-			<div className="grid gap-6">
-				<ActivitiesSection />
-				<PresetsSection />
-				<EmailTemplatesSection />
-				<UsersSection />
-				<RemindersSection />
-			</div>
+			<AdminSectionView activeSection={activeSection} />
 		</main>
 	);
+}
+
+function sectionFromHash(hash: string): AdminSectionId {
+	const id = hash.replace(/^#/, "");
+	if (
+		id === "admin-activities" ||
+		id === "admin-presets" ||
+		id === "admin-email-templates" ||
+		id === "admin-users" ||
+		id === "admin-reminders"
+	) {
+		return id;
+	}
+	return DEFAULT_ADMIN_SECTION;
+}
+
+function AdminSectionView({
+	activeSection,
+}: {
+	activeSection: AdminSectionId;
+}) {
+	if (activeSection === "admin-presets") return <PresetsSection />;
+	if (activeSection === "admin-email-templates")
+		return <EmailTemplatesSection />;
+	if (activeSection === "admin-users") return <UsersSection />;
+	if (activeSection === "admin-reminders") return <RemindersSection />;
+	return <ActivitiesSection />;
 }
 
 // ── 活动 & 组织者 ──

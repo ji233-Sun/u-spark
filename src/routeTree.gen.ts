@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FilesRouteImport } from './routes/files'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -26,7 +27,6 @@ import { Route as OrganizerManuscriptsRouteImport } from './routes/organizer.man
 import { Route as OrganizerExportRouteImport } from './routes/organizer.export'
 import { Route as OrganizerActivitiesRouteImport } from './routes/organizer.activities'
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
-import { Route as FilesSplatRouteImport } from './routes/files.$'
 import { Route as ApiUploadsRouteImport } from './routes/api/uploads'
 import { Route as ApiSurveysRouteImport } from './routes/api/surveys'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
@@ -45,6 +45,7 @@ import { Route as ApiOrganizerProposalsRouteImport } from './routes/api/organize
 import { Route as ApiOrganizerPaymentsRouteImport } from './routes/api/organizer/payments'
 import { Route as ApiOrganizerManuscriptsRouteImport } from './routes/api/organizer/manuscripts'
 import { Route as ApiOrganizerExportRouteImport } from './routes/api/organizer/export'
+import { Route as ApiOrganizerActivityProjectsRouteImport } from './routes/api/organizer/activity-projects'
 import { Route as ApiOrganizerActivityConfigRouteImport } from './routes/api/organizer/activity-config'
 import { Route as ApiOrganizerActivitiesRouteImport } from './routes/api/organizer/activities'
 import { Route as ApiMyProposalsRouteImport } from './routes/api/my/proposals'
@@ -67,6 +68,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilesRoute = FilesRouteImport.update({
+  id: '/files',
+  path: '/files',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -142,11 +148,6 @@ const OrganizerActivitiesRoute = OrganizerActivitiesRouteImport.update({
 const MyProposalsRoute = MyProposalsRouteImport.update({
   id: '/my/proposals',
   path: '/my/proposals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FilesSplatRoute = FilesSplatRouteImport.update({
-  id: '/files/$',
-  path: '/files/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUploadsRoute = ApiUploadsRouteImport.update({
@@ -244,6 +245,12 @@ const ApiOrganizerExportRoute = ApiOrganizerExportRouteImport.update({
   path: '/api/organizer/export',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizerActivityProjectsRoute =
+  ApiOrganizerActivityProjectsRouteImport.update({
+    id: '/api/organizer/activity-projects',
+    path: '/api/organizer/activity-projects',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiOrganizerActivityConfigRoute =
   ApiOrganizerActivityConfigRouteImport.update({
     id: '/api/organizer/activity-config',
@@ -320,12 +327,12 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/files': typeof FilesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
-  '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
   '/organizer/export': typeof OrganizerExportRoute
@@ -345,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
+  '/api/organizer/activity-projects': typeof ApiOrganizerActivityProjectsRoute
   '/api/organizer/export': typeof ApiOrganizerExportRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
@@ -371,12 +379,12 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/files': typeof FilesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
-  '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
   '/organizer/export': typeof OrganizerExportRoute
@@ -396,6 +404,7 @@ export interface FileRoutesByTo {
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
+  '/api/organizer/activity-projects': typeof ApiOrganizerActivityProjectsRoute
   '/api/organizer/export': typeof ApiOrganizerExportRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
@@ -423,12 +432,12 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/files': typeof FilesRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities_/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
-  '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
   '/organizer/export': typeof OrganizerExportRoute
@@ -448,6 +457,7 @@ export interface FileRoutesById {
   '/api/my/proposals': typeof ApiMyProposalsRoute
   '/api/organizer/activities': typeof ApiOrganizerActivitiesRoute
   '/api/organizer/activity-config': typeof ApiOrganizerActivityConfigRoute
+  '/api/organizer/activity-projects': typeof ApiOrganizerActivityProjectsRoute
   '/api/organizer/export': typeof ApiOrganizerExportRoute
   '/api/organizer/manuscripts': typeof ApiOrganizerManuscriptsRoute
   '/api/organizer/payments': typeof ApiOrganizerPaymentsRoute
@@ -476,12 +486,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/dashboard'
+    | '/files'
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
     | '/api/surveys'
     | '/api/uploads'
-    | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
     | '/organizer/export'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
+    | '/api/organizer/activity-projects'
     | '/api/organizer/export'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
@@ -527,12 +538,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/dashboard'
+    | '/files'
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
     | '/api/surveys'
     | '/api/uploads'
-    | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
     | '/organizer/export'
@@ -552,6 +563,7 @@ export interface FileRouteTypes {
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
+    | '/api/organizer/activity-projects'
     | '/api/organizer/export'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
@@ -578,12 +590,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/dashboard'
+    | '/files'
     | '/forgot-password'
     | '/reset-password'
     | '/activities_/$activityId'
     | '/api/surveys'
     | '/api/uploads'
-    | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
     | '/organizer/export'
@@ -603,6 +615,7 @@ export interface FileRouteTypes {
     | '/api/my/proposals'
     | '/api/organizer/activities'
     | '/api/organizer/activity-config'
+    | '/api/organizer/activity-projects'
     | '/api/organizer/export'
     | '/api/organizer/manuscripts'
     | '/api/organizer/payments'
@@ -630,12 +643,12 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  FilesRoute: typeof FilesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRouteWithChildren
   ApiSurveysRoute: typeof ApiSurveysRoute
   ApiUploadsRoute: typeof ApiUploadsRoute
-  FilesSplatRoute: typeof FilesSplatRoute
   MyProposalsRoute: typeof MyProposalsRoute
   OrganizerActivitiesRoute: typeof OrganizerActivitiesRoute
   OrganizerExportRoute: typeof OrganizerExportRoute
@@ -654,6 +667,7 @@ export interface RootRouteChildren {
   ApiMyProposalsRoute: typeof ApiMyProposalsRoute
   ApiOrganizerActivitiesRoute: typeof ApiOrganizerActivitiesRoute
   ApiOrganizerActivityConfigRoute: typeof ApiOrganizerActivityConfigRoute
+  ApiOrganizerActivityProjectsRoute: typeof ApiOrganizerActivityProjectsRoute
   ApiOrganizerExportRoute: typeof ApiOrganizerExportRoute
   ApiOrganizerManuscriptsRoute: typeof ApiOrganizerManuscriptsRoute
   ApiOrganizerPaymentsRoute: typeof ApiOrganizerPaymentsRoute
@@ -687,6 +701,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/files': {
+      id: '/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof FilesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -792,13 +813,6 @@ declare module '@tanstack/react-router' {
       path: '/my/proposals'
       fullPath: '/my/proposals'
       preLoaderRoute: typeof MyProposalsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/files/$': {
-      id: '/files/$'
-      path: '/files/$'
-      fullPath: '/files/$'
-      preLoaderRoute: typeof FilesSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/uploads': {
@@ -927,6 +941,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOrganizerExportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/organizer/activity-projects': {
+      id: '/api/organizer/activity-projects'
+      path: '/api/organizer/activity-projects'
+      fullPath: '/api/organizer/activity-projects'
+      preLoaderRoute: typeof ApiOrganizerActivityProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/organizer/activity-config': {
       id: '/api/organizer/activity-config'
       path: '/api/organizer/activity-config'
@@ -1040,12 +1061,12 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  FilesRoute: FilesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ActivitiesActivityIdRoute: ActivitiesActivityIdRouteWithChildren,
   ApiSurveysRoute: ApiSurveysRoute,
   ApiUploadsRoute: ApiUploadsRoute,
-  FilesSplatRoute: FilesSplatRoute,
   MyProposalsRoute: MyProposalsRoute,
   OrganizerActivitiesRoute: OrganizerActivitiesRoute,
   OrganizerExportRoute: OrganizerExportRoute,
@@ -1064,6 +1085,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiMyProposalsRoute: ApiMyProposalsRoute,
   ApiOrganizerActivitiesRoute: ApiOrganizerActivitiesRoute,
   ApiOrganizerActivityConfigRoute: ApiOrganizerActivityConfigRoute,
+  ApiOrganizerActivityProjectsRoute: ApiOrganizerActivityProjectsRoute,
   ApiOrganizerExportRoute: ApiOrganizerExportRoute,
   ApiOrganizerManuscriptsRoute: ApiOrganizerManuscriptsRoute,
   ApiOrganizerPaymentsRoute: ApiOrganizerPaymentsRoute,

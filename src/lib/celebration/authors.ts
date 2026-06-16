@@ -23,10 +23,15 @@ export function validateAuthorInput(input: AuthorInput): AuthorErrors {
 		errors.displayName = "昵称过长（最多 50 字）。";
 	}
 	const uid = str(input.bilibiliUid);
-	if (uid && !/^\d{1,15}$/.test(uid)) {
+	if (!uid) {
+		errors.bilibiliUid = "B站 UID 为必填项。";
+	} else if (!/^\d{1,15}$/.test(uid)) {
 		errors.bilibiliUid = "B站 UID 应为纯数字。";
 	}
-	if (str(input.duty).length > 50) {
+	const duty = str(input.duty);
+	if (!duty) {
+		errors.duty = "职能为必填项。";
+	} else if (duty.length > 50) {
 		errors.duty = "职能描述过长（最多 50 字）。";
 	}
 	return errors;

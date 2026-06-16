@@ -11,11 +11,7 @@ import {
 	hasFormErrors,
 	validateDynamicFormAnswers,
 } from "#/lib/celebration/form-engine";
-import {
-	canCreateProposalForActivity,
-	toStoredProposalAnswers,
-} from "#/lib/celebration/proposal";
-import type { ProjectStatus } from "#/lib/celebration/state-machine";
+import { toStoredProposalAnswers } from "#/lib/celebration/proposal";
 import { sendMail } from "#/lib/email";
 
 export const Route = createFileRoute("/api/projects/proposals")({
@@ -79,27 +75,6 @@ async function submitProposal({ request }: { request: Request }) {
 	const errors = validateDynamicFormAnswers(schema, answers);
 	if (hasFormErrors(errors)) {
 		return Response.json({ ok: false, errors }, { status: 400 });
-	}
-
-	const existing = await db
-		.select({ status: project.status })
-		.from(project)
-		.where(
-			and(
-				eq(project.activityId, activityId),
-				eq(project.createdBy, session.user.id),
-			),
-		);
-
-	if (
-		!canCreateProposalForActivity(
-			existing.map((row) => row.status as ProjectStatus),
-		)
-	) {
-		return Response.json(
-			{ ok: false, error: "你已提交过该活动的立项，请勿重复提交。" },
-			{ status: 409 },
-		);
 	}
 
 	const projectTitle = String(answers.projectTitle ?? "").trim();

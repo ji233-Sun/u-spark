@@ -149,7 +149,6 @@ async function mutateAuthors({ request }: { request: Request }) {
 		displayName?: unknown;
 		bilibiliUid?: unknown;
 		duty?: unknown;
-		isPayee?: unknown;
 		shipping?: {
 			recipientName?: unknown;
 			phone?: unknown;
@@ -203,34 +202,18 @@ async function mutateAuthors({ request }: { request: Request }) {
 		}
 		const values = {
 			displayName: String(body?.displayName).trim(),
-			bilibiliUid:
-				typeof body?.bilibiliUid === "string" && body.bilibiliUid.trim()
-					? body.bilibiliUid.trim()
-					: null,
-			duty:
-				typeof body?.duty === "string" && body.duty.trim()
-					? body.duty.trim()
-					: null,
-			isPayee: body?.isPayee === true,
+			bilibiliUid: String(body?.bilibiliUid).trim(),
+			duty: String(body?.duty).trim(),
 		};
 
-		await db.transaction(async (tx) => {
-			// 至多一个收款负责人：置位时清空其他。
-			if (values.isPayee) {
-				await tx
-					.update(projectAuthor)
-					.set({ isPayee: false })
-					.where(eq(projectAuthor.projectId, projectId));
-			}
-			if (action === "create") {
-				await tx.insert(projectAuthor).values({ projectId, ...values });
-			} else {
-				await tx
-					.update(projectAuthor)
-					.set(values)
-					.where(eq(projectAuthor.id, authorId));
-			}
-		});
+		if (action === "create") {
+			await db.insert(projectAuthor).values({ projectId, ...values });
+		} else {
+			await db
+				.update(projectAuthor)
+				.set(values)
+				.where(eq(projectAuthor.id, authorId));
+		}
 		return Response.json({ ok: true, authors: await readAuthors(projectId) });
 	}
 

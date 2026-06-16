@@ -6,6 +6,8 @@ import {
 	Mail,
 	Users,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { cn } from "#/lib/utils";
 
 type AdminNavItem = {
 	href: string;
@@ -48,6 +50,17 @@ const ADMIN_NAV: AdminNavItem[] = [
 ];
 
 export function AdminSecondarySidebar() {
+	const [activeHref, setActiveHref] = useState("#admin-activities");
+
+	useEffect(() => {
+		const syncHash = () => {
+			setActiveHref(window.location.hash || "#admin-activities");
+		};
+		syncHash();
+		window.addEventListener("hashchange", syncHash);
+		return () => window.removeEventListener("hashchange", syncHash);
+	}, []);
+
 	return (
 		<aside className="hidden h-svh w-64 shrink-0 border-r bg-background/95 lg:block">
 			<div className="sticky top-0 flex h-svh flex-col">
@@ -64,7 +77,11 @@ export function AdminSecondarySidebar() {
 						<a
 							key={item.href}
 							href={item.href}
-							className="group flex items-start gap-3 rounded-md px-3 py-2.5 text-sm text-foreground no-underline transition hover:bg-muted"
+							aria-current={activeHref === item.href ? "page" : undefined}
+							className={cn(
+								"group flex items-start gap-3 rounded-md px-3 py-2.5 text-sm text-foreground no-underline transition hover:bg-muted",
+								activeHref === item.href && "bg-muted font-medium",
+							)}
 						>
 							<item.icon className="mt-0.5 size-4 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
 							<span className="min-w-0">

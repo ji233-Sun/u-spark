@@ -1,9 +1,11 @@
-import { MemoryStorageProvider, type StorageProvider } from "./provider.ts";
+import { LocalFileStorageProvider, type StorageProvider } from "./provider.ts";
 import { validateImageUpload } from "./validation.ts";
 
 // 图片上传统一入口（T06 #6）：校验（白名单 + magic bytes）→ 存储 → 返回 key。
 
-let provider: StorageProvider = new MemoryStorageProvider();
+let provider: StorageProvider = new LocalFileStorageProvider(
+	process.env.LOCAL_STORAGE_DIR ?? ".local-storage/uploads",
+);
 export function setStorageProvider(p: StorageProvider): void {
 	provider = p;
 }

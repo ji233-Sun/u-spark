@@ -163,9 +163,6 @@ function AuthorCard({
 				<h3 className="m-0 text-base font-bold text-[var(--sea-ink)]">
 					{author.displayName}
 				</h3>
-				{author.isPayee && (
-					<span className="demo-pill text-xs text-emerald-700">收款负责人</span>
-				)}
 				{author.duty && (
 					<span className="demo-pill text-xs">{author.duty}</span>
 				)}
@@ -265,7 +262,6 @@ function AuthorForm({
 		displayName: string;
 		bilibiliUid: string;
 		duty: string;
-		isPayee: boolean;
 	}) => Promise<Record<string, string> | null>;
 }) {
 	const [errors, setErrors] = useState<Record<string, string>>({});
@@ -280,7 +276,6 @@ function AuthorForm({
 			displayName: String(fd.get("displayName") ?? ""),
 			bilibiliUid: String(fd.get("bilibiliUid") ?? ""),
 			duty: String(fd.get("duty") ?? ""),
-			isPayee: fd.get("isPayee") === "on",
 		});
 		setBusy(false);
 		setErrors(errs ?? {});
@@ -298,31 +293,26 @@ function AuthorForm({
 				/>
 			</Field>
 			<div className="grid gap-3 sm:grid-cols-2">
-				<Field label="B站 UID（选填）" error={errors.bilibiliUid}>
+				<Field label="B站 UID" error={errors.bilibiliUid} required>
 					<input
 						name="bilibiliUid"
 						defaultValue={initial?.bilibiliUid ?? ""}
+						required
+						inputMode="numeric"
+						pattern="[0-9]{1,15}"
 						className="demo-input"
 					/>
 				</Field>
-				<Field label="职能（选填）" error={errors.duty}>
+				<Field label="职能" error={errors.duty} required>
 					<input
 						name="duty"
 						defaultValue={initial?.duty ?? ""}
 						placeholder="导演 / 剪辑 / 后期…"
+						required
 						className="demo-input"
 					/>
 				</Field>
 			</div>
-			<label className="flex items-center gap-2 text-sm">
-				<input
-					type="checkbox"
-					name="isPayee"
-					defaultChecked={initial?.isPayee ?? false}
-					className="h-4 w-4 accent-[var(--lagoon-deep)]"
-				/>
-				设为收款负责人（项目级单一，稿酬全额打给此人，作者间线下分账）
-			</label>
 			<button type="submit" disabled={busy} className="demo-button w-fit">
 				{busy ? "保存中..." : submitLabel}
 			</button>
