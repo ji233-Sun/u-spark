@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Button } from "#/components/ui/button";
 import { authClient } from "#/lib/auth-client";
 import type { OrganizerManuscriptRecord } from "./api/organizer/manuscripts";
 
@@ -186,7 +187,7 @@ function ManuscriptReviewCard({
 					)}
 				</div>
 
-				<div className="grid gap-3">
+				<div className="grid content-start gap-3">
 					<textarea
 						value={reason}
 						onChange={(e) => setReason(e.target.value)}
@@ -194,31 +195,35 @@ function ManuscriptReviewCard({
 						className="demo-textarea min-h-24"
 						disabled={busy}
 					/>
-					<button
+					<Button
 						type="button"
 						disabled={busy}
-						className="demo-button"
+						size="sm"
+						className="h-9 justify-self-start px-4"
 						onClick={() => onReview(item, "approve", "")}
 					>
 						通过 → 信息补充
-					</button>
-					<div className="grid gap-2 sm:grid-cols-2">
-						<button
+					</Button>
+					<div className="flex flex-wrap gap-2">
+						<Button
 							type="button"
 							disabled={busy}
-							className="demo-button demo-button-secondary"
+							variant="secondary"
+							size="sm"
+							className="h-9 w-32"
 							onClick={() => onReview(item, "revise", reason)}
 						>
 							打回重交
-						</button>
-						<button
+						</Button>
+						<Button
 							type="button"
 							disabled={busy}
-							className="demo-button demo-button-danger"
+							size="sm"
+							className="h-9 w-32 bg-destructive text-white hover:bg-destructive/90"
 							onClick={() => onReview(item, "reject", reason)}
 						>
 							拒绝
-						</button>
+						</Button>
 					</div>
 				</div>
 			</div>

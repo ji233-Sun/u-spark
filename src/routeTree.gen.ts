@@ -29,6 +29,7 @@ import { Route as OrganizerActivitiesRouteImport } from './routes/organizer.acti
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as ApiUploadsRouteImport } from './routes/api/uploads'
 import { Route as ApiSurveysRouteImport } from './routes/api/surveys'
+import { Route as ApiFilesRouteImport } from './routes/api/files'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
 import { Route as ProjectsProjectIdPaymentRouteImport } from './routes/projects_.$projectId.payment'
 import { Route as ProjectsProjectIdManuscriptRouteImport } from './routes/projects_.$projectId.manuscript'
@@ -158,6 +159,11 @@ const ApiUploadsRoute = ApiUploadsRouteImport.update({
 const ApiSurveysRoute = ApiSurveysRouteImport.update({
   id: '/api/surveys',
   path: '/api/surveys',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFilesRoute = ApiFilesRouteImport.update({
+  id: '/api/files',
+  path: '/api/files',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
+  '/api/files': typeof ApiFilesRoute
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
   '/my/proposals': typeof MyProposalsRoute
@@ -383,6 +390,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
+  '/api/files': typeof ApiFilesRoute
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
   '/my/proposals': typeof MyProposalsRoute
@@ -436,6 +444,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities_/$activityId': typeof ActivitiesActivityIdRouteWithChildren
+  '/api/files': typeof ApiFilesRoute
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
   '/my/proposals': typeof MyProposalsRoute
@@ -490,6 +499,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
+    | '/api/files'
     | '/api/surveys'
     | '/api/uploads'
     | '/my/proposals'
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
+    | '/api/files'
     | '/api/surveys'
     | '/api/uploads'
     | '/my/proposals'
@@ -594,6 +605,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/reset-password'
     | '/activities_/$activityId'
+    | '/api/files'
     | '/api/surveys'
     | '/api/uploads'
     | '/my/proposals'
@@ -647,6 +659,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRouteWithChildren
+  ApiFilesRoute: typeof ApiFilesRoute
   ApiSurveysRoute: typeof ApiSurveysRoute
   ApiUploadsRoute: typeof ApiUploadsRoute
   MyProposalsRoute: typeof MyProposalsRoute
@@ -827,6 +840,13 @@ declare module '@tanstack/react-router' {
       path: '/api/surveys'
       fullPath: '/api/surveys'
       preLoaderRoute: typeof ApiSurveysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/files': {
+      id: '/api/files'
+      path: '/api/files'
+      fullPath: '/api/files'
+      preLoaderRoute: typeof ApiFilesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activities_/$activityId': {
@@ -1065,6 +1085,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ActivitiesActivityIdRoute: ActivitiesActivityIdRouteWithChildren,
+  ApiFilesRoute: ApiFilesRoute,
   ApiSurveysRoute: ApiSurveysRoute,
   ApiUploadsRoute: ApiUploadsRoute,
   MyProposalsRoute: MyProposalsRoute,

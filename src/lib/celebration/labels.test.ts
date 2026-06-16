@@ -27,6 +27,12 @@ describe("状态中文词表", () => {
 		expect(PROJECT_STATUS_TONES.proposal_rejected).toBe("danger");
 	});
 
+	it("项目主轴的稿件阶段不表达具体审核结果", () => {
+		expect(PROJECT_STATUS_LABELS.manuscript_submitted).toBe("稿件阶段");
+		expect(PROJECT_STATUS_LABELS.manuscript_submitted).not.toContain("待审");
+		expect(MANUSCRIPT_STATUS_LABELS.rejected).toBe("已拒绝");
+	});
+
 	it("覆盖活动时间线三状态", () => {
 		expect(ACTIVITY_TIMELINE_STATUS_LABELS.ongoing).toBe("进行中");
 		expect(ACTIVITY_TIMELINE_STATUS_LABELS.not_started).toBe("待开始");

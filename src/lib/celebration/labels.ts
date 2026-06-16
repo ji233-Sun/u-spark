@@ -12,7 +12,7 @@ export const PROJECT_STATUS_LABELS = {
 	proposal_submitted: "立项待审",
 	proposal_approved: "立项通过",
 	proposal_rejected: "立项被拒",
-	manuscript_submitted: "稿件待审",
+	manuscript_submitted: "稿件阶段",
 	manuscript_approved: "稿件通过",
 	info_supplement: "信息补充",
 	completed: "已完成",

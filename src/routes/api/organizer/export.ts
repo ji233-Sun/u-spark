@@ -96,6 +96,7 @@ async function exportProposals(activityId: string) {
 			id: project.id,
 			title: project.title,
 			status: project.status,
+			manuscriptStatus: manuscript.status,
 			createdAt: project.createdAt,
 			answers: project.proposalAnswers,
 			creatorName: user.name,
@@ -103,16 +104,29 @@ async function exportProposals(activityId: string) {
 		})
 		.from(project)
 		.innerJoin(user, eq(user.id, project.createdBy))
+		.leftJoin(manuscript, eq(manuscript.projectId, project.id))
 		.where(eq(project.activityId, activityId))
 		.orderBy(desc(project.createdAt));
 
 	return csvResponse(
 		"proposals.csv",
-		["项目ID", "标题", "状态", "创建者", "邮箱", "提交时间", "立项答案"],
+		[
+			"项目ID",
+			"标题",
+			"流程状态",
+			"稿件审核状态",
+			"创建者",
+			"邮箱",
+			"提交时间",
+			"立项答案",
+		],
 		rows.map((r) => [
 			r.id,
 			r.title,
 			PROJECT_STATUS_LABELS[r.status as ProjectStatus],
+			r.manuscriptStatus
+				? MANUSCRIPT_STATUS_LABELS[r.manuscriptStatus as ManuscriptStatus]
+				: "",
 			r.creatorName,
 			r.creatorEmail,
 			r.createdAt.toISOString(),
@@ -127,6 +141,7 @@ async function exportManuscripts(activityId: string) {
 			title: project.title,
 			msStatus: manuscript.status,
 			currentVersion: manuscript.currentVersion,
+			currentVersionStatus: manuscriptVersion.status,
 			driveLink: manuscriptVersion.driveLink,
 			extractCode: manuscriptVersion.extractCode,
 			submittedAt: manuscriptVersion.submittedAt,
@@ -148,7 +163,9 @@ async function exportManuscripts(activityId: string) {
 		["项目", "稿件状态", "当前版本", "网盘链接", "提取码", "提交时间"],
 		rows.map((r) => [
 			r.title,
-			MANUSCRIPT_STATUS_LABELS[r.msStatus as ManuscriptStatus],
+			MANUSCRIPT_STATUS_LABELS[
+				(r.currentVersionStatus ?? r.msStatus) as ManuscriptStatus
+			],
 			r.currentVersion,
 			r.driveLink,
 			r.extractCode,

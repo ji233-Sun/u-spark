@@ -6,9 +6,9 @@ import { auth } from "#/lib/auth";
 import {
 	type Actor,
 	assertCanManageActivity,
+	type Role,
 	requireAdmin,
 	requireUser,
-	type Role,
 } from "./access.ts";
 
 // RBAC 集成层（T04 #4）：把 better-auth 会话翻成 Actor，封装为可复用的

@@ -25,7 +25,7 @@ export function buildSignedPath(
 		expires: String(expiresAt),
 		sig,
 	});
-	return `/files?${params.toString()}`;
+	return `/api/files?${params.toString()}`;
 }
 
 export type VerifyResult = { ok: true } | { ok: false; reason: string };
