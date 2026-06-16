@@ -2,7 +2,6 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { AppSidebar } from "#/components/app-sidebar";
-import ThemeToggle from "#/components/ThemeToggle";
 import { Separator } from "#/components/ui/separator";
 import {
 	SidebarInset,
@@ -75,7 +74,6 @@ function PublicHeader() {
 					</Link>
 				</nav>
 				<div className="ml-auto flex items-center gap-1.5">
-					<ThemeToggle />
 					<BetterAuthHeader />
 				</div>
 			</div>
