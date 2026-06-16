@@ -3,6 +3,7 @@ import { emailLog, emailTemplate } from "#/db/celebration-schema";
 import { db } from "#/db/index";
 import { consoleProvider, type EmailProvider } from "./provider.ts";
 import { RateLimiter } from "./rate-limit.ts";
+import { createSmtpProvider, smtpConfigFromEnv } from "./smtp-provider.ts";
 import {
 	type EmailTemplate,
 	type EmailTemplateData,
@@ -32,8 +33,11 @@ async function resolveTemplate(
 
 // 邮件统一入口（T05 #5）：渲染模板 → 限频 → 发送（带重试）→ 写 email_log。
 
-// 默认 provider = console（dev）。生产用 setMailProvider 注入 SMTP / Resend（DIP）。
-let provider: EmailProvider = consoleProvider;
+// 默认 provider = console（dev）；配置 SMTP_* 后自动外发。测试/生产也可用 setMailProvider 注入。
+const smtpConfig = smtpConfigFromEnv();
+let provider: EmailProvider = smtpConfig
+	? createSmtpProvider(smtpConfig)
+	: consoleProvider;
 export function setMailProvider(p: EmailProvider): void {
 	provider = p;
 }
