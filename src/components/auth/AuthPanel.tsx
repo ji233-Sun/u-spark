@@ -10,7 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "#/components/ui/card";
-import { Checkbox } from "#/components/ui/checkbox";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs";
@@ -71,7 +70,6 @@ export function AuthPanel({
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [otp, setOtp] = useState("");
-	const [rememberMe, setRememberMe] = useState(true);
 	const [needsOtp, setNeedsOtp] = useState(false);
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState("");
@@ -141,13 +139,11 @@ export function AuthPanel({
 				? await authClient.signIn.email({
 						email: identifier,
 						password,
-						rememberMe,
 						callbackURL: redirectTo,
 					})
 				: await authClient.signIn.username({
 						username: identifier,
 						password,
-						rememberMe,
 						callbackURL: redirectTo,
 					});
 
@@ -203,17 +199,21 @@ export function AuthPanel({
 				return;
 			}
 
-			const result = await authClient.signUp.email({
-				email,
-				password,
-				name: username,
-				username,
-				displayUsername: username,
-				callbackURL: redirectTo,
+			const result = await fetch("/api/auth/register/begin", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					email,
+					username,
+					password,
+				}),
 			});
 
-			if (result.error) {
-				setError(readableAuthError(result.error.message));
+			if (!result.ok) {
+				const data = (await result.json().catch(() => null)) as {
+					error?: string;
+				} | null;
+				setError(readableAuthError(data?.error));
 				return;
 			}
 
@@ -234,9 +234,16 @@ export function AuthPanel({
 		setLoading(true);
 
 		try {
-			const result = await authClient.emailOtp.verifyEmail({ email, otp });
-			if (result.error) {
-				setError(readableAuthError(result.error.message));
+			const result = await fetch("/api/auth/register/verify", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ email, otp, password }),
+			});
+			if (!result.ok) {
+				const data = (await result.json().catch(() => null)) as {
+					error?: string;
+				} | null;
+				setError(readableAuthError(data?.error));
 				return;
 			}
 			setMessage("邮箱验证成功，正在进入账号。");
@@ -299,7 +306,6 @@ export function AuthPanel({
 								autoComplete="current-password"
 							/>
 						</div>
-						<RememberMe checked={rememberMe} onChange={setRememberMe} />
 						<Feedback error={error} message={message} />
 						<SubmitButton loading={loading} label="登录" />
 						<Link
@@ -379,7 +385,6 @@ export function AuthPanel({
 								autoComplete="new-password"
 							/>
 						</div>
-						<RememberMe checked={rememberMe} onChange={setRememberMe} />
 						<Feedback error={error} message={message} />
 						<SubmitButton loading={loading} label="创建账号并发送验证码" />
 					</form>
@@ -410,24 +415,6 @@ export function AuthPanel({
 				)}
 			</CardContent>
 		</Card>
-	);
-}
-
-function RememberMe({
-	checked,
-	onChange,
-}: {
-	checked: boolean;
-	onChange: (checked: boolean) => void;
-}) {
-	return (
-		<Label className="flex items-center gap-2 text-sm font-normal text-muted-foreground">
-			<Checkbox
-				checked={checked}
-				onCheckedChange={(c) => onChange(c === true)}
-			/>
-			<span>记住我</span>
-		</Label>
 	);
 }
 

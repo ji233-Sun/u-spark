@@ -30,7 +30,7 @@ export const auth = betterAuth({
 		},
 	},
 	emailVerification: {
-		sendOnSignUp: true,
+		sendOnSignUp: false,
 		autoSignInAfterVerification: true,
 	},
 	user: {
@@ -54,7 +54,7 @@ export const auth = betterAuth({
 			expiresIn: AUTH_OTP_EXPIRES_SECONDS,
 			allowedAttempts: AUTH_RATE_LIMIT_MAX,
 			storeOTP: "hashed",
-			sendVerificationOnSignUp: true,
+			sendVerificationOnSignUp: false,
 			overrideDefaultEmailVerification: true,
 			rateLimit: {
 				window: AUTH_RATE_LIMIT_WINDOW_SECONDS,

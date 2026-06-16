@@ -56,6 +56,8 @@ import { Route as ApiAdminOrganizersRouteImport } from './routes/api/admin/organ
 import { Route as ApiAdminEmailTemplatesRouteImport } from './routes/api/admin/email-templates'
 import { Route as ApiAdminActivitiesRouteImport } from './routes/api/admin/activities'
 import { Route as ActivitiesActivityIdProposalRouteImport } from './routes/activities_.$activityId.proposal'
+import { Route as ApiAuthRegisterVerifyRouteImport } from './routes/api/auth/register/verify'
+import { Route as ApiAuthRegisterBeginRouteImport } from './routes/api/auth/register/begin'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -299,6 +301,16 @@ const ActivitiesActivityIdProposalRoute =
     path: '/proposal',
     getParentRoute: () => ActivitiesActivityIdRoute,
   } as any)
+const ApiAuthRegisterVerifyRoute = ApiAuthRegisterVerifyRouteImport.update({
+  id: '/api/auth/register/verify',
+  path: '/api/auth/register/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthRegisterBeginRoute = ApiAuthRegisterBeginRouteImport.update({
+  id: '/api/auth/register/begin',
+  path: '/api/auth/register/begin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -348,6 +360,8 @@ export interface FileRoutesByFullPath {
   '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
   '/projects/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
+  '/api/auth/register/begin': typeof ApiAuthRegisterBeginRoute
+  '/api/auth/register/verify': typeof ApiAuthRegisterVerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -397,6 +411,8 @@ export interface FileRoutesByTo {
   '/projects/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
   '/projects/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
+  '/api/auth/register/begin': typeof ApiAuthRegisterBeginRoute
+  '/api/auth/register/verify': typeof ApiAuthRegisterVerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -447,6 +463,8 @@ export interface FileRoutesById {
   '/projects_/$projectId/authors': typeof ProjectsProjectIdAuthorsRoute
   '/projects_/$projectId/manuscript': typeof ProjectsProjectIdManuscriptRoute
   '/projects_/$projectId/payment': typeof ProjectsProjectIdPaymentRoute
+  '/api/auth/register/begin': typeof ApiAuthRegisterBeginRoute
+  '/api/auth/register/verify': typeof ApiAuthRegisterVerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -498,6 +516,8 @@ export interface FileRouteTypes {
     | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
     | '/projects/$projectId/payment'
+    | '/api/auth/register/begin'
+    | '/api/auth/register/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -547,6 +567,8 @@ export interface FileRouteTypes {
     | '/projects/$projectId/authors'
     | '/projects/$projectId/manuscript'
     | '/projects/$projectId/payment'
+    | '/api/auth/register/begin'
+    | '/api/auth/register/verify'
   id:
     | '__root__'
     | '/'
@@ -596,6 +618,8 @@ export interface FileRouteTypes {
     | '/projects_/$projectId/authors'
     | '/projects_/$projectId/manuscript'
     | '/projects_/$projectId/payment'
+    | '/api/auth/register/begin'
+    | '/api/auth/register/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -645,6 +669,8 @@ export interface RootRouteChildren {
   ProjectsProjectIdAuthorsRoute: typeof ProjectsProjectIdAuthorsRoute
   ProjectsProjectIdManuscriptRoute: typeof ProjectsProjectIdManuscriptRoute
   ProjectsProjectIdPaymentRoute: typeof ProjectsProjectIdPaymentRoute
+  ApiAuthRegisterBeginRoute: typeof ApiAuthRegisterBeginRoute
+  ApiAuthRegisterVerifyRoute: typeof ApiAuthRegisterVerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -978,6 +1004,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivitiesActivityIdProposalRouteImport
       parentRoute: typeof ActivitiesActivityIdRoute
     }
+    '/api/auth/register/verify': {
+      id: '/api/auth/register/verify'
+      path: '/api/auth/register/verify'
+      fullPath: '/api/auth/register/verify'
+      preLoaderRoute: typeof ApiAuthRegisterVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/register/begin': {
+      id: '/api/auth/register/begin'
+      path: '/api/auth/register/begin'
+      fullPath: '/api/auth/register/begin'
+      preLoaderRoute: typeof ApiAuthRegisterBeginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1039,6 +1079,8 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsProjectIdAuthorsRoute: ProjectsProjectIdAuthorsRoute,
   ProjectsProjectIdManuscriptRoute: ProjectsProjectIdManuscriptRoute,
   ProjectsProjectIdPaymentRoute: ProjectsProjectIdPaymentRoute,
+  ApiAuthRegisterBeginRoute: ApiAuthRegisterBeginRoute,
+  ApiAuthRegisterVerifyRoute: ApiAuthRegisterVerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
