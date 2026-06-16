@@ -62,38 +62,23 @@ function PaymentsPage() {
 		);
 	}
 
-		return (
-			<main className="demo-page demo-page-wide">
-				<header className="mb-6">
-					<p className="island-kicker mb-2">Organizer</p>
-					<h1 className="demo-title">稿酬分配</h1>
-					<p className="demo-muted mt-3 text-sm">
+	const actionableRecords = records.filter(
+		(record) => !record.amount || record.paymentCode,
+	);
+
+	return (
+		<main className="demo-page demo-page-wide">
+			<header className="mb-6">
+				<p className="island-kicker mb-2">Organizer</p>
+				<h1 className="demo-title">稿酬分配</h1>
+				<p className="demo-muted mt-3 text-sm">
 					先核定稿酬；创作者上传收款码后，再在这里发放稿酬。
-					</p>
-				</header>
+				</p>
+			</header>
 
-				{(() => {
-					const actionableRecords = records.filter(
-						(record) => !record.amount || record.paymentCode,
-					);
-					if (!loading && !error && actionableRecords.length === 0) {
-						return (
-							<section className="demo-panel text-center">
-								<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
-									暂无可处理的稿酬
-								</h2>
-								<p className="demo-muted mt-2 text-sm">
-									未核定稿酬的项目会在这里出现；已核定但尚未上传收款码的项目会暂时隐藏。
-								</p>
-							</section>
-						);
-					}
-					return null;
-				})()}
-
-				{loading ? (
-					<PaymentsLoading />
-				) : error ? (
+			{loading ? (
+				<PaymentsLoading />
+			) : error ? (
 				<section className="demo-alert demo-alert-danger mb-4">
 					<p className="m-0 text-sm text-red-600">{error}</p>
 				</section>
@@ -106,27 +91,34 @@ function PaymentsPage() {
 						稿件审核通过并进入信息补充后会出现在这里。
 					</p>
 				</section>
+			) : actionableRecords.length === 0 ? (
+				<section className="demo-panel text-center">
+					<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
+						暂无可处理的稿酬
+					</h2>
+					<p className="demo-muted mt-2 text-sm">
+						未核定稿酬的项目会在这里出现；已核定但尚未上传收款码的项目会暂时隐藏。
+					</p>
+				</section>
 			) : (
 				<section className="grid gap-4">
-					{records
-						.filter((record) => !record.amount || record.paymentCode)
-						.map((record) =>
-							record.amount && record.paymentCode ? (
-								<DisbursementCard
-									key={record.projectId}
-									record={record}
-									onSaved={load}
-									onError={setError}
-								/>
-							) : (
-								<AssignmentCard
-									key={record.projectId}
-									record={record}
-									onSaved={load}
-									onError={setError}
-								/>
-							),
-						)}
+					{actionableRecords.map((record) =>
+						record.amount && record.paymentCode ? (
+							<DisbursementCard
+								key={record.projectId}
+								record={record}
+								onSaved={load}
+								onError={setError}
+							/>
+						) : (
+							<AssignmentCard
+								key={record.projectId}
+								record={record}
+								onSaved={load}
+								onError={setError}
+							/>
+						),
+					)}
 				</section>
 			)}
 		</main>

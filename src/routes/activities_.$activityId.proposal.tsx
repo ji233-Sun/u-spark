@@ -106,11 +106,12 @@ function ProposalPage() {
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		const form = event.currentTarget;
 		setSubmitting(true);
 		setErrors({});
 		setMessage("");
 
-		const formData = new FormData(event.currentTarget);
+		const formData = new FormData(form);
 		const answers = formDataToDynamicAnswers(data.schema, formData);
 
 		const response = await fetch("/api/projects/proposals", {
@@ -132,7 +133,7 @@ function ProposalPage() {
 			return;
 		}
 		setMessage("立项已提交，回执邮件已发送。");
-		event.currentTarget.reset();
+		form.reset();
 	};
 
 	const hasErrors = Object.keys(errors).length > 0;
