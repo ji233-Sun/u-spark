@@ -1,4 +1,4 @@
-// 状态时间轴（T07 #7，服务 T17）：多节点 + 每节点状态展示。
+// 状态时间轴（服务 T17）：多节点 + 每节点状态展示。
 export type TimelineNodeStatus = "done" | "current" | "pending" | "rejected";
 
 export type TimelineNode = {
@@ -9,10 +9,9 @@ export type TimelineNode = {
 
 const DOT_CLASS: Record<TimelineNodeStatus, string> = {
 	done: "border-emerald-500 bg-emerald-500",
-	current:
-		"border-[var(--lagoon)] bg-[var(--lagoon)] ring-4 ring-[var(--hero-a)]",
-	pending: "border-[var(--line)] bg-transparent",
-	rejected: "border-red-500 bg-red-500",
+	current: "border-primary bg-primary ring-4 ring-primary/20",
+	pending: "border-border bg-transparent",
+	rejected: "border-destructive bg-destructive",
 };
 
 export function Timeline({ nodes }: { nodes: TimelineNode[] }) {
@@ -27,18 +26,18 @@ export function Timeline({ nodes }: { nodes: TimelineNode[] }) {
 					{i < nodes.length - 1 && (
 						<span
 							aria-hidden
-							className="absolute left-[7px] top-4 h-full w-px bg-[var(--line)]"
+							className="absolute top-4 left-[7px] h-full w-px bg-border"
 						/>
 					)}
 					<span
 						className={`relative mt-1 h-4 w-4 flex-shrink-0 rounded-full border-2 ${DOT_CLASS[node.status]}`}
 					/>
 					<div className="min-w-0">
-						<p className="m-0 text-sm font-semibold text-[var(--sea-ink)]">
+						<p className="m-0 text-sm font-semibold text-foreground">
 							{node.label}
 						</p>
 						{node.description && (
-							<p className="m-0 mt-0.5 text-xs text-[var(--sea-ink-soft)]">
+							<p className="m-0 mt-0.5 text-xs text-muted-foreground">
 								{node.description}
 							</p>
 						)}
