@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { ActivityManagementSecondarySidebar } from "#/components/activity-management-secondary-sidebar";
 import { AdminSecondarySidebar } from "#/components/admin-secondary-sidebar";
 import { AppSidebar } from "#/components/app-sidebar";
 import ThemeToggle from "#/components/ThemeToggle";
@@ -31,6 +32,10 @@ function isPublicPath(pathname: string): boolean {
 
 function isAdminPath(pathname: string): boolean {
 	return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+function isOrganizerActivityDetailPath(pathname: string): boolean {
+	return /^\/organizer\/activities\/[^/]+$/.test(pathname);
 }
 
 const TITLES: Record<string, string> = {
@@ -131,9 +136,12 @@ export function AppFrame({ children }: { children: ReactNode }) {
 		<SidebarProvider>
 			<AppSidebar />
 			{isAdminPath(pathname) && <AdminSecondarySidebar />}
-			<SidebarInset>
+			{isOrganizerActivityDetailPath(pathname) && (
+				<ActivityManagementSecondarySidebar />
+			)}
+			<SidebarInset className="min-w-0 flex-1 basis-0 overflow-x-hidden">
 				<DashboardTopbar />
-				<div className="flex-1">{children}</div>
+				<div className="min-w-0 flex-1">{children}</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);

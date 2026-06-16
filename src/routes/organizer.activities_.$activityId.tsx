@@ -19,6 +19,12 @@ export const Route = createFileRoute("/organizer/activities_/$activityId")({
 	component: ActivityConfigPage,
 });
 
+type ActivitySectionId =
+	| "activity-projects"
+	| "activity-basics"
+	| "activity-form";
+const DEFAULT_ACTIVITY_SECTION: ActivitySectionId = "activity-projects";
+
 function toLocalInput(iso: string): string {
 	const d = new Date(iso);
 	const pad = (n: number) => String(n).padStart(2, "0");
@@ -31,6 +37,9 @@ function ActivityConfigPage() {
 	const [config, setConfig] = useState<ActivityConfig | null>(null);
 	const [projects, setProjects] = useState<OrganizerActivityProjectRecord[]>(
 		[],
+	);
+	const [activeSection, setActiveSection] = useState<ActivitySectionId>(
+		DEFAULT_ACTIVITY_SECTION,
 	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
@@ -76,6 +85,15 @@ function ActivityConfigPage() {
 		load();
 	}, [isPending, session?.user, activityId]);
 
+	useEffect(() => {
+		const syncSection = () => {
+			setActiveSection(activitySectionFromHash(window.location.hash));
+		};
+		syncSection();
+		window.addEventListener("hashchange", syncSection);
+		return () => window.removeEventListener("hashchange", syncSection);
+	}, []);
+
 	if (isPending || (loading && !config)) {
 		return (
 			<main className="demo-page demo-page-wide">
@@ -112,18 +130,67 @@ function ActivityConfigPage() {
 			</Link>
 			<header className="mt-4 mb-6">
 				<p className="island-kicker mb-2">Configure</p>
-				<h1 className="demo-title">活动配置</h1>
+				<h1 className="demo-title">{config.title}</h1>
+				<p className="demo-muted mt-3 text-sm">
+					管理当前活动的立项、稿件状态、基础信息和立项表单。
+				</p>
 			</header>
 
-			<ProjectOverviewSection projects={projects} />
-			<BasicsSection config={config} activityId={activityId} onSaved={load} />
-			<FormBuilderSection
+			<ActivitySectionView
+				activeSection={activeSection}
+				projects={projects}
 				config={config}
 				activityId={activityId}
 				onSaved={load}
 			/>
 		</main>
 	);
+}
+
+function activitySectionFromHash(hash: string): ActivitySectionId {
+	const id = hash.replace(/^#/, "");
+	if (
+		id === "activity-projects" ||
+		id === "activity-basics" ||
+		id === "activity-form"
+	) {
+		return id;
+	}
+	return DEFAULT_ACTIVITY_SECTION;
+}
+
+function ActivitySectionView({
+	activeSection,
+	projects,
+	config,
+	activityId,
+	onSaved,
+}: {
+	activeSection: ActivitySectionId;
+	projects: OrganizerActivityProjectRecord[];
+	config: ActivityConfig;
+	activityId: string;
+	onSaved: () => void;
+}) {
+	if (activeSection === "activity-basics") {
+		return (
+			<BasicsSection
+				config={config}
+				activityId={activityId}
+				onSaved={onSaved}
+			/>
+		);
+	}
+	if (activeSection === "activity-form") {
+		return (
+			<FormBuilderSection
+				config={config}
+				activityId={activityId}
+				onSaved={onSaved}
+			/>
+		);
+	}
+	return <ProjectOverviewSection projects={projects} />;
 }
 
 const PROJECT_FILTERS = [
@@ -185,7 +252,7 @@ function ProjectOverviewSection({
 	).length;
 
 	return (
-		<section className="demo-panel mb-6">
+		<section id="activity-projects" className="demo-panel scroll-mt-20">
 			<div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
 				<div>
 					<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
@@ -246,7 +313,7 @@ function ProjectOverviewSection({
 					<p className="demo-muted m-0 text-sm">没有匹配的立项。</p>
 				</div>
 			) : (
-				<div className="overflow-x-auto rounded-lg border border-[var(--line)]">
+				<div className="max-w-full overflow-x-auto rounded-lg border border-[var(--line)]">
 					<table className="w-full min-w-[56rem] border-collapse text-sm">
 						<thead className="bg-[var(--chip-bg)] text-left text-[var(--muted)]">
 							<tr>
@@ -377,7 +444,7 @@ function BasicsSection({
 	};
 
 	return (
-		<section className="demo-panel mb-6">
+		<section id="activity-basics" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-4 text-lg font-bold text-[var(--sea-ink)]">
 				基础信息 & 截止时间
 			</h2>
@@ -524,7 +591,7 @@ function FormBuilderSection({
 	};
 
 	return (
-		<section className="demo-panel">
+		<section id="activity-form" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-2 text-lg font-bold text-[var(--sea-ink)]">
 				立项表单自定义
 			</h2>

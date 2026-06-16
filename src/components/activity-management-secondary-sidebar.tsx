@@ -1,60 +1,47 @@
+import { Link } from "@tanstack/react-router";
 import {
-	AlarmClock,
-	CalendarRange,
-	FileQuestion,
+	ClipboardList,
+	FileCog,
 	type LucideIcon,
-	Mail,
-	Users,
+	Settings2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "#/lib/utils";
 
-type AdminNavItem = {
+type ActivityNavItem = {
 	href: string;
 	label: string;
 	description: string;
 	icon: LucideIcon;
 };
 
-const ADMIN_NAV: AdminNavItem[] = [
+const ACTIVITY_NAV: ActivityNavItem[] = [
 	{
-		href: "#admin-activities",
-		label: "活动与组织者",
-		description: "活动创建、组织者指派",
-		icon: CalendarRange,
+		href: "#activity-projects",
+		label: "项目总览",
+		description: "立项与稿件状态",
+		icon: ClipboardList,
 	},
 	{
-		href: "#admin-presets",
-		label: "预设问题库",
-		description: "表单题目模板",
-		icon: FileQuestion,
+		href: "#activity-basics",
+		label: "基础信息",
+		description: "活动信息与截止时间",
+		icon: Settings2,
 	},
 	{
-		href: "#admin-email-templates",
-		label: "邮件模板",
-		description: "系统邮件文案",
-		icon: Mail,
-	},
-	{
-		href: "#admin-users",
-		label: "用户管理",
-		description: "角色与权限",
-		icon: Users,
-	},
-	{
-		href: "#admin-reminders",
-		label: "DDL 提醒",
-		description: "手动触发提醒任务",
-		icon: AlarmClock,
+		href: "#activity-form",
+		label: "立项表单",
+		description: "自定义立项题目",
+		icon: FileCog,
 	},
 ];
 
-export function AdminSecondarySidebar() {
-	const [activeHref, setActiveHref] = useState("#admin-activities");
+export function ActivityManagementSecondarySidebar() {
+	const [activeHref, setActiveHref] = useState("#activity-projects");
 
 	useEffect(() => {
 		const syncHash = () => {
-			setActiveHref(window.location.hash || "#admin-activities");
+			setActiveHref(window.location.hash || "#activity-projects");
 		};
 		syncHash();
 		window.addEventListener("hashchange", syncHash);
@@ -66,14 +53,14 @@ export function AdminSecondarySidebar() {
 			<div className="sticky top-0 flex max-h-svh min-h-0 flex-col">
 				<div className="border-b px-5 py-4">
 					<p className="m-0 text-xs font-medium text-muted-foreground">
-						管理后台
+						活动管理
 					</p>
 					<h2 className="m-0 mt-1 text-base font-semibold text-foreground">
-						后台导航
+						活动导航
 					</h2>
 				</div>
 				<nav className="flex-1 space-y-1 overflow-y-auto p-3">
-					{ADMIN_NAV.map((item) => (
+					{ACTIVITY_NAV.map((item) => (
 						<a
 							key={item.href}
 							href={item.href}
@@ -95,6 +82,14 @@ export function AdminSecondarySidebar() {
 						</a>
 					))}
 				</nav>
+				<div className="border-t p-3">
+					<Link
+						to="/organizer/activities"
+						className="block rounded-md px-3 py-2 text-sm text-muted-foreground no-underline transition hover:bg-muted hover:text-foreground"
+					>
+						返回活动列表
+					</Link>
+				</div>
 			</div>
 		</aside>
 	);
