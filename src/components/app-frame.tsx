@@ -141,7 +141,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 			)}
 			<SidebarInset className="min-w-0 flex-1 basis-0 overflow-x-hidden">
 				<DashboardTopbar />
-				<div className="min-w-0 flex-1">{children}</div>
+				<div className="dashboard-content min-w-0 flex-1">{children}</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);
