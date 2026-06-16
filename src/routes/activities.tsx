@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { desc, eq } from "drizzle-orm";
-import { StatusBadge } from "#/components/ui/StatusBadge";
+import { StatusBadge } from "#/components/ui";
 import { activity } from "#/db/celebration-schema";
 import { db } from "#/db/index";
 import {

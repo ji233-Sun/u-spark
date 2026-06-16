@@ -9,28 +9,29 @@ import type {
 	ManuscriptStatus,
 	ProjectStatus,
 } from "#/lib/celebration/state-machine";
+import { cn } from "#/lib/utils";
+import { Badge } from "./badge.tsx";
 
+// 语义色调 → shadcn token 配色（对接状态机 SSOT）。
 const TONE_CLASS: Record<Tone, string> = {
-	neutral: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-	info: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
-	success:
-		"bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
-	warning:
-		"bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-	danger: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+	neutral: "bg-muted text-muted-foreground",
+	info: "bg-primary/10 text-primary",
+	success: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+	warning: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+	danger: "bg-destructive/10 text-destructive",
 };
 
 export function StatusBadge({ label, tone }: { label: string; tone: Tone }) {
 	return (
-		<span
-			className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TONE_CLASS[tone]}`}
+		<Badge
+			variant="secondary"
+			className={cn("border-transparent", TONE_CLASS[tone])}
 		>
 			{label}
-		</span>
+		</Badge>
 	);
 }
 
-// 便捷封装：直接吃状态枚举（对接状态机 SSOT）。
 export function ProjectStatusBadge({ status }: { status: ProjectStatus }) {
 	return (
 		<StatusBadge

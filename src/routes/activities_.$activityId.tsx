@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { and, eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
-import { StatusBadge } from "#/components/ui/StatusBadge";
+import { StatusBadge } from "#/components/ui";
 import { user } from "#/db/auth-schema";
 import { activity, activityOrganizer, form } from "#/db/celebration-schema";
 import { db } from "#/db/index";

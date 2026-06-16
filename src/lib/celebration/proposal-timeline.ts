@@ -1,4 +1,4 @@
-import type { TimelineNode } from "#/components/ui/Timeline";
+import type { TimelineNode } from "#/components/ui";
 import type { ManuscriptStatus, ProjectStatus } from "./state-machine.ts";
 
 export function proposalTimelineNodes(

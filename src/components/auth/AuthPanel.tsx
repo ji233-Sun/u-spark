@@ -1,5 +1,19 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { Alert, AlertDescription } from "#/components/ui/alert";
+import { Button } from "#/components/ui/button";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "#/components/ui/card";
+import { Checkbox } from "#/components/ui/checkbox";
+import { Input } from "#/components/ui/input";
+import { Label } from "#/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { authClient } from "#/lib/auth-client";
 import {
 	isEmailIdentifier,
@@ -44,7 +58,7 @@ function readableAuthError(message: string | undefined): string {
 }
 
 export function AuthPanel({
-	redirectTo = "/account",
+	redirectTo = "/dashboard",
 	showSignedInState = true,
 }: AuthPanelProps) {
 	const navigate = useNavigate();
@@ -66,59 +80,38 @@ export function AuthPanel({
 	if (isPending) {
 		return (
 			<div className="flex min-h-64 items-center justify-center">
-				<div className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-200 border-t-neutral-900 dark:border-neutral-800 dark:border-t-neutral-100" />
+				<Loader2 className="size-6 animate-spin text-muted-foreground" />
 			</div>
 		);
 	}
 
 	if (session?.user && showSignedInState) {
 		return (
-			<section className="demo-panel w-full max-w-md space-y-6">
-				<div className="space-y-1.5">
-					<p className="island-kicker mb-2">Session</p>
-					<h1 className="demo-title">已登录</h1>
-					<p className="demo-muted text-sm">{session.user.email}</p>
-				</div>
-
-				<div className="flex items-center gap-3">
-					{session.user.image ? (
-						<img src={session.user.image} alt="" className="h-10 w-10" />
-					) : (
-						<div className="flex h-10 w-10 items-center justify-center bg-neutral-200 dark:bg-neutral-800">
-							<span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-								{session.user.name?.charAt(0).toUpperCase() || "U"}
-							</span>
-						</div>
-					)}
-					<div className="min-w-0 flex-1">
-						<p className="truncate text-sm font-medium">{session.user.name}</p>
-						<p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
-							{session.user.email}
-						</p>
-					</div>
-				</div>
-
-				<div className="grid gap-3 sm:grid-cols-2">
-					<Link to="/account" className="demo-button no-underline">
-						进入账号页
-					</Link>
-					<button
-						type="button"
+			<Card className="w-full max-w-md">
+				<CardHeader>
+					<CardTitle>已登录</CardTitle>
+					<CardDescription>{session.user.email}</CardDescription>
+				</CardHeader>
+				<CardContent className="grid gap-3 sm:grid-cols-2">
+					<Button asChild>
+						<Link to="/dashboard">进入用户中心</Link>
+					</Button>
+					<Button
+						variant="secondary"
 						onClick={() => {
 							void authClient.signOut({
 								fetchOptions: {
 									onSuccess: () => {
-										void navigate({ to: "/auth" });
+										void navigate({ to: "/" });
 									},
 								},
 							});
 						}}
-						className="demo-button demo-button-secondary"
 					>
 						退出登录
-					</button>
-				</div>
-			</section>
+					</Button>
+				</CardContent>
+			</Card>
 		);
 	}
 
@@ -216,7 +209,6 @@ export function AuthPanel({
 				name: username,
 				username,
 				displayUsername: username,
-				rememberMe,
 				callbackURL: redirectTo,
 			});
 
@@ -242,10 +234,7 @@ export function AuthPanel({
 		setLoading(true);
 
 		try {
-			const result = await authClient.emailOtp.verifyEmail({
-				email,
-				otp,
-			});
+			const result = await authClient.emailOtp.verifyEmail({ email, otp });
 			if (result.error) {
 				setError(readableAuthError(result.error.message));
 				return;
@@ -264,203 +253,163 @@ export function AuthPanel({
 	};
 
 	return (
-		<section className="demo-panel w-full max-w-md">
-			<p className="island-kicker mb-2">U-Spark Account</p>
-			<h1 className="demo-title">
-				{mode === "signup" ? "Create an account" : "Sign in"}
-			</h1>
+		<Card className="w-full max-w-md">
+			<CardHeader>
+				<CardTitle className="text-2xl">
+					{mode === "signup" ? "创建账号" : "登录 U-Spark"}
+				</CardTitle>
+				<CardDescription>
+					{mode === "signup"
+						? "注册后即可发起立项与投稿。"
+						: "使用用户名/邮箱密码、或登录链接进入。"}
+				</CardDescription>
+			</CardHeader>
 
-			<div className="mt-6 grid grid-cols-3 gap-2 rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] p-1">
-				<button
-					type="button"
-					onClick={() => switchMode("password")}
-					className={`demo-button px-2 ${mode === "password" ? "" : "demo-button-secondary"}`}
-				>
-					密码
-				</button>
-				<button
-					type="button"
-					onClick={() => switchMode("magic")}
-					className={`demo-button px-2 ${mode === "magic" ? "" : "demo-button-secondary"}`}
-				>
-					链接
-				</button>
-				<button
-					type="button"
-					onClick={() => switchMode("signup")}
-					className={`demo-button px-2 ${mode === "signup" ? "" : "demo-button-secondary"}`}
-				>
-					注册
-				</button>
-			</div>
+			<CardContent className="space-y-6">
+				<Tabs value={mode} onValueChange={(v) => switchMode(v as AuthMode)}>
+					<TabsList className="grid w-full grid-cols-3">
+						<TabsTrigger value="password">密码</TabsTrigger>
+						<TabsTrigger value="magic">链接</TabsTrigger>
+						<TabsTrigger value="signup">注册</TabsTrigger>
+					</TabsList>
+				</Tabs>
 
-			{mode === "password" && (
-				<form onSubmit={handlePasswordLogin} className="mt-6 grid gap-4">
-					<div className="grid gap-2">
-						<label htmlFor="identifier" className="text-sm font-medium">
-							用户名或邮箱
-						</label>
-						<input
-							id="identifier"
-							type="text"
-							value={identifier}
-							onChange={(e) => setIdentifier(e.target.value)}
-							className="demo-input"
-							required
-							autoComplete="username"
-						/>
-					</div>
+				{mode === "password" && (
+					<form onSubmit={handlePasswordLogin} className="grid gap-4">
+						<div className="grid gap-2">
+							<Label htmlFor="identifier">用户名或邮箱</Label>
+							<Input
+								id="identifier"
+								type="text"
+								value={identifier}
+								onChange={(e) => setIdentifier(e.target.value)}
+								required
+								autoComplete="username"
+							/>
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="password">密码</Label>
+							<Input
+								id="password"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								required
+								minLength={8}
+								autoComplete="current-password"
+							/>
+						</div>
+						<RememberMe checked={rememberMe} onChange={setRememberMe} />
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="登录" />
+						<Link
+							to="/forgot-password"
+							className="text-center text-sm text-muted-foreground no-underline hover:text-foreground"
+						>
+							忘记密码？
+						</Link>
+					</form>
+				)}
 
-					<div className="grid gap-2">
-						<label htmlFor="password" className="text-sm font-medium">
-							密码
-						</label>
-						<input
-							id="password"
-							type="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							className="demo-input"
-							required
-							minLength={8}
-							autoComplete="current-password"
-						/>
-					</div>
+				{mode === "magic" && (
+					<form onSubmit={handleMagicLink} className="grid gap-4">
+						<div className="grid gap-2">
+							<Label htmlFor="magicEmail">邮箱</Label>
+							<Input
+								id="magicEmail"
+								type="email"
+								value={magicEmail}
+								onChange={(e) => setMagicEmail(e.target.value)}
+								required
+								autoComplete="email"
+							/>
+						</div>
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="发送登录链接" />
+					</form>
+				)}
 
-					<RememberMe checked={rememberMe} onChange={setRememberMe} />
-					<Feedback error={error} message={message} />
-					<SubmitButton loading={loading} label="登录" />
-					<Link
-						to="/forgot-password"
-						className="demo-muted text-center text-sm no-underline transition-colors hover:text-[var(--sea-ink)]"
-					>
-						忘记密码？
-					</Link>
-				</form>
-			)}
+				{mode === "signup" && !needsOtp && (
+					<form onSubmit={handleSignUp} className="grid gap-4">
+						<div className="grid gap-2">
+							<Label htmlFor="username">用户名</Label>
+							<Input
+								id="username"
+								type="text"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
+								required
+								minLength={3}
+								maxLength={30}
+								autoComplete="username"
+							/>
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="email">邮箱</Label>
+							<Input
+								id="email"
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								required
+								autoComplete="email"
+							/>
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="newPassword">密码</Label>
+							<Input
+								id="newPassword"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								required
+								minLength={8}
+								autoComplete="new-password"
+							/>
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="confirmPassword">确认密码</Label>
+							<Input
+								id="confirmPassword"
+								type="password"
+								value={confirmPassword}
+								onChange={(e) => setConfirmPassword(e.target.value)}
+								required
+								minLength={8}
+								autoComplete="new-password"
+							/>
+						</div>
+						<RememberMe checked={rememberMe} onChange={setRememberMe} />
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="创建账号并发送验证码" />
+					</form>
+				)}
 
-			{mode === "magic" && (
-				<form onSubmit={handleMagicLink} className="mt-6 grid gap-4">
-					<div className="grid gap-2">
-						<label htmlFor="magicEmail" className="text-sm font-medium">
-							邮箱
-						</label>
-						<input
-							id="magicEmail"
-							type="email"
-							value={magicEmail}
-							onChange={(e) => setMagicEmail(e.target.value)}
-							className="demo-input"
-							required
-							autoComplete="email"
-						/>
-					</div>
-
-					<Feedback error={error} message={message} />
-					<SubmitButton loading={loading} label="发送登录链接" />
-				</form>
-			)}
-
-			{mode === "signup" && !needsOtp && (
-				<form onSubmit={handleSignUp} className="mt-6 grid gap-4">
-					<div className="grid gap-2">
-						<label htmlFor="username" className="text-sm font-medium">
-							用户名
-						</label>
-						<input
-							id="username"
-							type="text"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							className="demo-input"
-							required
-							minLength={3}
-							maxLength={30}
-							autoComplete="username"
-						/>
-					</div>
-
-					<div className="grid gap-2">
-						<label htmlFor="email" className="text-sm font-medium">
-							邮箱
-						</label>
-						<input
-							id="email"
-							type="email"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							className="demo-input"
-							required
-							autoComplete="email"
-						/>
-					</div>
-
-					<div className="grid gap-2">
-						<label htmlFor="newPassword" className="text-sm font-medium">
-							密码
-						</label>
-						<input
-							id="newPassword"
-							type="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							className="demo-input"
-							required
-							minLength={8}
-							autoComplete="new-password"
-						/>
-					</div>
-
-					<div className="grid gap-2">
-						<label htmlFor="confirmPassword" className="text-sm font-medium">
-							确认密码
-						</label>
-						<input
-							id="confirmPassword"
-							type="password"
-							value={confirmPassword}
-							onChange={(e) => setConfirmPassword(e.target.value)}
-							className="demo-input"
-							required
-							minLength={8}
-							autoComplete="new-password"
-						/>
-					</div>
-
-					<RememberMe checked={rememberMe} onChange={setRememberMe} />
-					<Feedback error={error} message={message} />
-					<SubmitButton loading={loading} label="创建账号并发送验证码" />
-				</form>
-			)}
-
-			{mode === "signup" && needsOtp && (
-				<form onSubmit={handleVerifyOtp} className="mt-6 grid gap-4">
-					<div className="demo-alert">
-						<p className="text-sm">验证码已发送至 {email}。</p>
-					</div>
-					<div className="grid gap-2">
-						<label htmlFor="otp" className="text-sm font-medium">
-							验证码
-						</label>
-						<input
-							id="otp"
-							type="text"
-							inputMode="numeric"
-							value={otp}
-							onChange={(e) => setOtp(e.target.value)}
-							className="demo-input"
-							required
-							minLength={6}
-							maxLength={6}
-							autoComplete="one-time-code"
-						/>
-					</div>
-
-					<Feedback error={error} message={message} />
-					<SubmitButton loading={loading} label="验证并登录" />
-				</form>
-			)}
-		</section>
+				{mode === "signup" && needsOtp && (
+					<form onSubmit={handleVerifyOtp} className="grid gap-4">
+						<Alert>
+							<AlertDescription>验证码已发送至 {email}。</AlertDescription>
+						</Alert>
+						<div className="grid gap-2">
+							<Label htmlFor="otp">验证码</Label>
+							<Input
+								id="otp"
+								type="text"
+								inputMode="numeric"
+								value={otp}
+								onChange={(e) => setOtp(e.target.value)}
+								required
+								minLength={6}
+								maxLength={6}
+								autoComplete="one-time-code"
+							/>
+						</div>
+						<Feedback error={error} message={message} />
+						<SubmitButton loading={loading} label="验证并登录" />
+					</form>
+				)}
+			</CardContent>
+		</Card>
 	);
 }
 
@@ -472,31 +421,29 @@ function RememberMe({
 	onChange: (checked: boolean) => void;
 }) {
 	return (
-		<label className="flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-			<input
-				type="checkbox"
+		<Label className="flex items-center gap-2 text-sm font-normal text-muted-foreground">
+			<Checkbox
 				checked={checked}
-				onChange={(e) => onChange(e.target.checked)}
-				className="h-4 w-4 accent-[var(--lagoon-deep)]"
+				onCheckedChange={(c) => onChange(c === true)}
 			/>
 			<span>记住我</span>
-		</label>
+		</Label>
 	);
 }
 
 function Feedback({ error, message }: { error: string; message: string }) {
 	if (error) {
 		return (
-			<div className="demo-alert demo-alert-danger">
-				<p className="text-sm text-red-600">{error}</p>
-			</div>
+			<Alert variant="destructive">
+				<AlertDescription>{error}</AlertDescription>
+			</Alert>
 		);
 	}
 	if (message) {
 		return (
-			<div className="demo-alert">
-				<p className="text-sm">{message}</p>
-			</div>
+			<Alert>
+				<AlertDescription>{message}</AlertDescription>
+			</Alert>
 		);
 	}
 	return null;
@@ -504,15 +451,15 @@ function Feedback({ error, message }: { error: string; message: string }) {
 
 function SubmitButton({ loading, label }: { loading: boolean; label: string }) {
 	return (
-		<button type="submit" disabled={loading} className="demo-button w-full">
+		<Button type="submit" disabled={loading} className="w-full">
 			{loading ? (
-				<span className="flex items-center justify-center gap-2">
-					<span className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-400 border-t-white dark:border-neutral-600 dark:border-t-neutral-900" />
-					<span>Please wait</span>
-				</span>
+				<>
+					<Loader2 className="animate-spin" />
+					请稍候
+				</>
 			) : (
 				label
 			)}
-		</button>
+		</Button>
 	);
 }

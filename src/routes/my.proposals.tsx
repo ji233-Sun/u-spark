@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ProjectStatusBadge } from "#/components/ui/StatusBadge";
-import { Timeline } from "#/components/ui/Timeline";
+import { ProjectStatusBadge, Timeline } from "#/components/ui";
 import { authClient } from "#/lib/auth-client";
 import {
 	canRestartProposal,

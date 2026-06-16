@@ -1,87 +1,116 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+	ArrowRight,
+	BadgeCheck,
+	ClipboardList,
+	FileText,
+	Send,
+	Wallet,
+} from "lucide-react";
+import { Badge } from "#/components/ui/badge";
+import { Button } from "#/components/ui/button";
+import {
+	Card,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "#/components/ui/card";
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute("/")({ component: HomePage });
 
-function App() {
-  return (
-    <main className="page-wrap px-4 pb-8 pt-14">
-      <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-        <p className="island-kicker mb-3">TanStack Start Base Template</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-[var(--sea-ink)] sm:text-6xl">
-          Start simple, ship quickly.
-        </h1>
-        <p className="mb-8 max-w-2xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
-          This base starter intentionally keeps things light: two routes, clean
-          structure, and the essentials you need to build from scratch.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href="/about"
-            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 text-sm font-semibold text-[var(--lagoon-deep)] no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
-          >
-            About This Starter
-          </a>
-          <a
-            href="https://tanstack.com/router"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-5 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)]"
-          >
-            Router Guide
-          </a>
-        </div>
-      </section>
+const FEATURES = [
+	{
+		icon: ClipboardList,
+		title: "立项申报",
+		desc: "组织者配置表单与截止时间，作者在线提交立项，状态实时流转。",
+	},
+	{
+		icon: Send,
+		title: "投稿审核",
+		desc: "稿件提交、审核、退回修改全程留痕，状态机守护每一步。",
+	},
+	{
+		icon: FileText,
+		title: "信息补充",
+		desc: "通过后按需补充作者、收货与收款信息，结构化沉淀。",
+	},
+	{
+		icon: Wallet,
+		title: "稿酬发放",
+		desc: "稿酬与奖品发放清单一目了然，导出对账无压力。",
+	},
+];
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          [
-            'Type-Safe Routing',
-            'Routes and links stay in sync across every page.',
-          ],
-          [
-            'Server Functions',
-            'Call server code from your UI without creating API boilerplate.',
-          ],
-          [
-            'Streaming by Default',
-            'Ship progressively rendered responses for faster experiences.',
-          ],
-          [
-            'Tailwind Native',
-            'Design quickly with utility-first styling and reusable tokens.',
-          ],
-        ].map(([title, desc], index) => (
-          <article
-            key={title}
-            className="island-shell feature-card rise-in rounded-2xl p-5"
-            style={{ animationDelay: `${index * 90 + 80}ms` }}
-          >
-            <h2 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">
-              {title}
-            </h2>
-            <p className="m-0 text-sm text-[var(--sea-ink-soft)]">{desc}</p>
-          </article>
-        ))}
-      </section>
+const STEPS = [
+	["01", "立项", "提交企划立项，等待组织者审核。"],
+	["02", "投稿", "立项通过后上传稿件，进入评审。"],
+	["03", "补充", "审核通过后补全作者与收款信息。"],
+	["04", "发放", "组织者完成稿酬与奖品发放。"],
+];
 
-      <section className="island-shell mt-8 rounded-2xl p-6">
-        <p className="island-kicker mb-2">Quick Start</p>
-        <ul className="m-0 list-disc space-y-2 pl-5 text-sm text-[var(--sea-ink-soft)]">
-          <li>
-            Edit <code>src/routes/index.tsx</code> to customize the home page.
-          </li>
-          <li>
-            Update <code>src/components/Header.tsx</code> and{' '}
-            <code>src/components/Footer.tsx</code> for brand links.
-          </li>
-          <li>
-            Add routes in <code>src/routes</code> and tweak visual tokens in{' '}
-            <code>src/styles.css</code>.
-          </li>
-        </ul>
-      </section>
-    </main>
-  )
+function HomePage() {
+	return (
+		<div className="page-wrap px-4 pb-16 pt-12 sm:pt-16">
+			<section className="rise-in relative overflow-hidden rounded-3xl border bg-card px-6 py-12 shadow-sm sm:px-12 sm:py-16">
+				<div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-primary/10 blur-3xl" />
+				<div className="relative max-w-2xl">
+					<Badge variant="secondary" className="mb-4">
+						视频庆典 · 征稿协作平台
+					</Badge>
+					<h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
+						从立项到稿酬，
+						<br />
+						一条龙顺畅流转
+					</h1>
+					<p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
+						U-Spark
+						面向视频类庆典企划，覆盖立项、投稿、审核、信息补充、稿酬/奖品发放全流程，让组织者与作者高效协作。
+					</p>
+					<div className="mt-8 flex flex-wrap gap-3">
+						<Button asChild size="lg">
+							<Link to="/auth">
+								立即开始
+								<ArrowRight />
+							</Link>
+						</Button>
+						<Button asChild size="lg" variant="outline">
+							<Link to="/activities">浏览活动</Link>
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			<section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+				{FEATURES.map((f) => (
+					<Card key={f.title} className="rise-in">
+						<CardHeader>
+							<div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+								<f.icon className="size-5" />
+							</div>
+							<CardTitle>{f.title}</CardTitle>
+							<CardDescription>{f.desc}</CardDescription>
+						</CardHeader>
+					</Card>
+				))}
+			</section>
+
+			<section className="mt-10 rounded-3xl border bg-card p-6 shadow-sm sm:p-10">
+				<div className="mb-6 flex items-center gap-2 text-sm font-semibold text-primary">
+					<BadgeCheck className="size-4" />
+					四步流程
+				</div>
+				<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+					{STEPS.map(([num, title, desc]) => (
+						<div key={num}>
+							<div className="text-3xl font-bold text-primary/30">{num}</div>
+							<h3 className="mt-1 text-base font-semibold text-foreground">
+								{title}
+							</h3>
+							<p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+						</div>
+					))}
+				</div>
+			</section>
+		</div>
+	);
 }

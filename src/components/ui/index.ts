@@ -1,14 +1,15 @@
-// UI Kit 统一出口（T07 #7）。基础布局 Header/Footer/ThemeToggle 见 src/components/。
-export { Button } from "./Button.tsx";
-export { Field, Input, Select, Textarea } from "./Form.tsx";
-export { Modal } from "./Modal.tsx";
+// UI Kit 兼容出口：保持旧导出名不变，内核已全部替换为 shadcn（radix-maia 主题）。
+// 新页面请直接从 ./button、./card 等 shadcn 原语导入；本兼容层逐页重写后清理。
+
+export type { Column } from "./data-table.tsx";
+export { Table } from "./data-table.tsx";
+export { Button, Field, Input, Select, Textarea } from "./legacy.tsx";
+export { Modal } from "./modal.tsx";
 export {
 	ManuscriptStatusBadge,
 	ProjectStatusBadge,
 	StatusBadge,
-} from "./StatusBadge.tsx";
-export { Table } from "./Table.tsx";
-export type { Column } from "./Table.tsx";
-export { Timeline } from "./Timeline.tsx";
-export type { TimelineNode, TimelineNodeStatus } from "./Timeline.tsx";
-export { ToastProvider, useToast } from "./Toast.tsx";
+} from "./status-badge.tsx";
+export type { TimelineNode, TimelineNodeStatus } from "./timeline.tsx";
+export { Timeline } from "./timeline.tsx";
+export { ToastProvider, useToast } from "./toast.tsx";

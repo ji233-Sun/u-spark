@@ -1,4 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
+import { Button } from "#/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "#/components/ui/dropdown-menu";
+import { Skeleton } from "#/components/ui/skeleton";
 import { authClient } from "#/lib/auth-client";
 
 export default function BetterAuthHeader() {
@@ -6,54 +18,65 @@ export default function BetterAuthHeader() {
 	const { data: session, isPending } = authClient.useSession();
 
 	if (isPending) {
+		return <Skeleton className="h-9 w-9 rounded-full" />;
+	}
+
+	if (!session?.user) {
 		return (
-			<div className="h-8 w-8 animate-pulse bg-neutral-100 dark:bg-neutral-800" />
+			<Button asChild size="sm">
+				<Link to="/auth">登录</Link>
+			</Button>
 		);
 	}
 
-	if (session?.user) {
-		return (
-			<div className="flex items-center gap-2">
-				<Link
-					to="/account"
-					className="inline-flex h-9 items-center gap-2 rounded-xl border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5"
+	const user = session.user;
+	const initial = user.name?.charAt(0).toUpperCase() || "U";
+
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button
+					variant="ghost"
+					size="icon"
+					className="rounded-full"
+					aria-label="账号菜单"
 				>
-					{session.user.image ? (
-						<img src={session.user.image} alt="" className="h-6 w-6" />
-					) : (
-						<span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-100 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
-							{session.user.name?.charAt(0).toUpperCase() || "U"}
-						</span>
-					)}
-					<span className="hidden max-w-24 truncate sm:inline">
-						{session.user.name || session.user.email}
+					<Avatar className="size-8">
+						{user.image ? <AvatarImage src={user.image} alt="" /> : null}
+						<AvatarFallback>{initial}</AvatarFallback>
+					</Avatar>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-56">
+				<DropdownMenuLabel className="flex flex-col gap-0.5">
+					<span className="truncate text-sm font-medium">{user.name}</span>
+					<span className="truncate text-xs font-normal text-muted-foreground">
+						{user.email}
 					</span>
-				</Link>
-				<button
-					type="button"
-					onClick={() => {
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem asChild>
+					<Link to="/account">
+						<User />
+						账号设置
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					variant="destructive"
+					onSelect={() => {
 						void authClient.signOut({
 							fetchOptions: {
 								onSuccess: () => {
-									void navigate({ to: "/auth" });
+									void navigate({ to: "/" });
 								},
 							},
 						});
 					}}
-					className="inline-flex h-9 items-center rounded-xl border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 text-sm font-semibold text-[var(--sea-ink-soft)] transition hover:-translate-y-0.5 hover:text-[var(--sea-ink)]"
 				>
-					登出
-				</button>
-			</div>
-		);
-	}
-
-	return (
-		<Link
-			to="/auth"
-			className="inline-flex h-9 items-center rounded-xl border border-[var(--chip-line)] bg-[var(--chip-bg)] px-4 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5"
-		>
-			登录
-		</Link>
+					<LogOut />
+					退出登录
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

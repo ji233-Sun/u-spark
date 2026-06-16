@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivitiesRouteImport } from './routes/activities'
@@ -26,9 +27,6 @@ import { Route as OrganizerExportRouteImport } from './routes/organizer.export'
 import { Route as OrganizerActivitiesRouteImport } from './routes/organizer.activities'
 import { Route as MyProposalsRouteImport } from './routes/my.proposals'
 import { Route as FilesSplatRouteImport } from './routes/files.$'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
-import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
 import { Route as ApiUploadsRouteImport } from './routes/api/uploads'
 import { Route as ApiSurveysRouteImport } from './routes/api/surveys'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
@@ -67,6 +65,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -142,21 +145,6 @@ const MyProposalsRoute = MyProposalsRouteImport.update({
 const FilesSplatRoute = FilesSplatRouteImport.update({
   id: '/files/$',
   path: '/files/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoDrizzleRoute = DemoDrizzleRouteImport.update({
-  id: '/demo/drizzle',
-  path: '/demo/drizzle',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoBetterAuthRoute = DemoBetterAuthRouteImport.update({
-  id: '/demo/better-auth',
-  path: '/demo/better-auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUploadsRoute = ApiUploadsRouteImport.update({
@@ -319,14 +307,12 @@ export interface FileRoutesByFullPath {
   '/activities': typeof ActivitiesRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
-  '/demo/better-auth': typeof DemoBetterAuthRoute
-  '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
@@ -370,14 +356,12 @@ export interface FileRoutesByTo {
   '/activities': typeof ActivitiesRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
-  '/demo/better-auth': typeof DemoBetterAuthRoute
-  '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
@@ -422,14 +406,12 @@ export interface FileRoutesById {
   '/activities': typeof ActivitiesRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/activities_/$activityId': typeof ActivitiesActivityIdRouteWithChildren
   '/api/surveys': typeof ApiSurveysRoute
   '/api/uploads': typeof ApiUploadsRoute
-  '/demo/better-auth': typeof DemoBetterAuthRoute
-  '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/files/$': typeof FilesSplatRoute
   '/my/proposals': typeof MyProposalsRoute
   '/organizer/activities': typeof OrganizerActivitiesRoute
@@ -475,14 +457,12 @@ export interface FileRouteTypes {
     | '/activities'
     | '/admin'
     | '/auth'
+    | '/dashboard'
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
     | '/api/surveys'
     | '/api/uploads'
-    | '/demo/better-auth'
-    | '/demo/drizzle'
-    | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
@@ -526,14 +506,12 @@ export interface FileRouteTypes {
     | '/activities'
     | '/admin'
     | '/auth'
+    | '/dashboard'
     | '/forgot-password'
     | '/reset-password'
     | '/activities/$activityId'
     | '/api/surveys'
     | '/api/uploads'
-    | '/demo/better-auth'
-    | '/demo/drizzle'
-    | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
@@ -577,14 +555,12 @@ export interface FileRouteTypes {
     | '/activities'
     | '/admin'
     | '/auth'
+    | '/dashboard'
     | '/forgot-password'
     | '/reset-password'
     | '/activities_/$activityId'
     | '/api/surveys'
     | '/api/uploads'
-    | '/demo/better-auth'
-    | '/demo/drizzle'
-    | '/demo/tanstack-query'
     | '/files/$'
     | '/my/proposals'
     | '/organizer/activities'
@@ -629,14 +605,12 @@ export interface RootRouteChildren {
   ActivitiesRoute: typeof ActivitiesRoute
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
+  DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRouteWithChildren
   ApiSurveysRoute: typeof ApiSurveysRoute
   ApiUploadsRoute: typeof ApiUploadsRoute
-  DemoBetterAuthRoute: typeof DemoBetterAuthRoute
-  DemoDrizzleRoute: typeof DemoDrizzleRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   FilesSplatRoute: typeof FilesSplatRoute
   MyProposalsRoute: typeof MyProposalsRoute
   OrganizerActivitiesRoute: typeof OrganizerActivitiesRoute
@@ -687,6 +661,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/forgot-password'
       preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -792,27 +773,6 @@ declare module '@tanstack/react-router' {
       path: '/files/$'
       fullPath: '/files/$'
       preLoaderRoute: typeof FilesSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/drizzle': {
-      id: '/demo/drizzle'
-      path: '/demo/drizzle'
-      fullPath: '/demo/drizzle'
-      preLoaderRoute: typeof DemoDrizzleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/better-auth': {
-      id: '/demo/better-auth'
-      path: '/demo/better-auth'
-      fullPath: '/demo/better-auth'
-      preLoaderRoute: typeof DemoBetterAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/uploads': {
@@ -1039,14 +999,12 @@ const rootRouteChildren: RootRouteChildren = {
   ActivitiesRoute: ActivitiesRoute,
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
+  DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ActivitiesActivityIdRoute: ActivitiesActivityIdRouteWithChildren,
   ApiSurveysRoute: ApiSurveysRoute,
   ApiUploadsRoute: ApiUploadsRoute,
-  DemoBetterAuthRoute: DemoBetterAuthRoute,
-  DemoDrizzleRoute: DemoDrizzleRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   FilesSplatRoute: FilesSplatRoute,
   MyProposalsRoute: MyProposalsRoute,
   OrganizerActivitiesRoute: OrganizerActivitiesRoute,
