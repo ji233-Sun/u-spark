@@ -132,7 +132,7 @@ function ActivitiesSection() {
 	};
 
 	return (
-		<section className="demo-panel">
+		<section id="admin-activities" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-4 text-lg font-bold text-[var(--sea-ink)]">
 				活动 & 组织者
 			</h2>
@@ -283,7 +283,7 @@ function PresetsSection() {
 	};
 
 	return (
-		<section className="demo-panel">
+		<section id="admin-presets" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-4 text-lg font-bold text-[var(--sea-ink)]">
 				预设问题库
 			</h2>
@@ -369,7 +369,7 @@ function EmailTemplatesSection() {
 	};
 
 	return (
-		<section className="demo-panel">
+		<section id="admin-email-templates" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-2 text-lg font-bold text-[var(--sea-ink)]">
 				邮件模板
 			</h2>
@@ -471,7 +471,7 @@ function RemindersSection() {
 	};
 
 	return (
-		<section className="demo-panel">
+		<section id="admin-reminders" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-2 text-lg font-bold text-[var(--sea-ink)]">
 				DDL 临近提醒
 			</h2>
@@ -515,7 +515,7 @@ function UsersSection() {
 	};
 
 	return (
-		<section className="demo-panel">
+		<section id="admin-users" className="demo-panel scroll-mt-20">
 			<h2 className="m-0 mb-4 text-lg font-bold text-[var(--sea-ink)]">
 				用户管理
 			</h2>

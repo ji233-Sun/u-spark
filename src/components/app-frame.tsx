@@ -1,7 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { AdminSecondarySidebar } from "#/components/admin-secondary-sidebar";
 import { AppSidebar } from "#/components/app-sidebar";
+import ThemeToggle from "#/components/ThemeToggle";
 import { Separator } from "#/components/ui/separator";
 import {
 	SidebarInset,
@@ -25,6 +27,10 @@ function isPublicPath(pathname: string): boolean {
 	return PUBLIC_PREFIXES.some(
 		(p) => pathname === p || pathname.startsWith(`${p}/`),
 	);
+}
+
+function isAdminPath(pathname: string): boolean {
+	return pathname === "/admin" || pathname.startsWith("/admin/");
 }
 
 const TITLES: Record<string, string> = {
@@ -124,6 +130,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
+			{isAdminPath(pathname) && <AdminSecondarySidebar />}
 			<SidebarInset>
 				<DashboardTopbar />
 				<div className="flex-1">{children}</div>
