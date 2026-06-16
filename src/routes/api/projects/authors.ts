@@ -168,7 +168,7 @@ async function mutateAuthors({ request }: { request: Request }) {
 	}
 	if (!owned.canManage) {
 		return Response.json(
-			{ ok: false, error: "信息补充已截止，作者信息已锁定。" },
+			{ ok: false, error: "仅信息补充阶段可填报作者与收货信息。" },
 			{ status: 400 },
 		);
 	}

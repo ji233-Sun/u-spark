@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ProjectStatusBadge, Timeline } from "#/components/ui";
+import { StatusBadge, Timeline } from "#/components/ui";
 import { authClient } from "#/lib/auth-client";
 import {
 	canRestartProposal,
+	proposalOverviewBadge,
 	proposalTimelineNodes,
 } from "#/lib/celebration/proposal-timeline";
 import type {
@@ -113,12 +114,19 @@ function MyProposalsPage() {
 						const projectStatus = proposal.status as ProjectStatus;
 						const manuscriptStatus =
 							proposal.manuscriptStatus as ManuscriptStatus | null;
+						const overviewBadge = proposalOverviewBadge(
+							projectStatus,
+							manuscriptStatus,
+						);
 						return (
 							<article key={proposal.id} className="demo-list-item">
 								<div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
 									<div>
 										<div className="mb-2 flex flex-wrap items-center gap-2">
-											<ProjectStatusBadge status={projectStatus} />
+											<StatusBadge
+												label={overviewBadge.label}
+												tone={overviewBadge.tone}
+											/>
 											<span className="demo-muted text-xs">
 												提交于 {formatDate(new Date(proposal.createdAt))}
 											</span>
@@ -148,7 +156,7 @@ function MyProposalsPage() {
 														: "查看稿件"}
 												</Link>
 											)}
-											{MANUSCRIPT_STAGES.includes(projectStatus) && (
+											{projectStatus === "info_supplement" && (
 												<Link
 													to="/projects/$projectId/authors"
 													params={{ projectId: proposal.id }}
@@ -157,8 +165,7 @@ function MyProposalsPage() {
 													作者 / 收件
 												</Link>
 											)}
-											{(projectStatus === "info_supplement" ||
-												projectStatus === "completed") && (
+											{projectStatus === "info_supplement" && (
 												<Link
 													to="/projects/$projectId/payment"
 													params={{ projectId: proposal.id }}

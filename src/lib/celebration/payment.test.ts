@@ -27,10 +27,11 @@ describe("稿酬金额校验", () => {
 });
 
 describe("稿酬分配资格", () => {
-	it("立项通过及之后可分配", () => {
-		expect(canAssignRemuneration("proposal_approved")).toBe(true);
+	it("仅信息补充阶段可分配", () => {
+		expect(canAssignRemuneration("proposal_approved")).toBe(false);
+		expect(canAssignRemuneration("manuscript_approved")).toBe(false);
 		expect(canAssignRemuneration("info_supplement")).toBe(true);
-		expect(canAssignRemuneration("completed")).toBe(true);
+		expect(canAssignRemuneration("completed")).toBe(false);
 	});
 
 	it("草稿 / 被拒 / 撤回不可分配", () => {
@@ -49,13 +50,14 @@ describe("发放状态", () => {
 });
 
 describe("收款码上传条件", () => {
-	it("已核定稿酬且 DDL 未过方可上传", () => {
-		expect(canUploadPaymentCode(true, false)).toBe(true);
+	it("信息补充阶段、已核定稿酬且 DDL 未过方可上传", () => {
+		expect(canUploadPaymentCode("info_supplement", true, false)).toBe(true);
+		expect(canUploadPaymentCode("proposal_approved", true, false)).toBe(false);
 	});
 	it("未核定稿酬不可上传", () => {
-		expect(canUploadPaymentCode(false, false)).toBe(false);
+		expect(canUploadPaymentCode("info_supplement", false, false)).toBe(false);
 	});
 	it("信息补充 DDL 后不可上传", () => {
-		expect(canUploadPaymentCode(true, true)).toBe(false);
+		expect(canUploadPaymentCode("info_supplement", true, true)).toBe(false);
 	});
 });

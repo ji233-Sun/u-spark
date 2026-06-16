@@ -60,12 +60,12 @@ export function validateShippingAddress(input: ShippingInput): AuthorErrors {
 	return errors;
 }
 
-// 作者增删改窗口：信息补充 DDL 前、且项目未撤回方可操作（T21：DDL 后入口关闭）。
+// 作者 / 收货信息仅属于信息补充阶段：未进入 info_supplement 前不开放，DDL 后关闭。
 export function canManageAuthors(
 	projectStatus: ProjectStatus,
 	infoDeadlinePassed: boolean,
 ): boolean {
-	return projectStatus !== "withdrawn" && !infoDeadlinePassed;
+	return projectStatus === "info_supplement" && !infoDeadlinePassed;
 }
 
 export function hasAuthorErrors(errors: AuthorErrors): boolean {

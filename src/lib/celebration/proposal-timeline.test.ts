@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	canRestartProposal,
+	proposalOverviewBadge,
 	proposalTimelineNodes,
 } from "./proposal-timeline.ts";
 
@@ -39,6 +40,19 @@ describe("我的立项时间轴", () => {
 		).toMatchObject({
 			label: "稿件拒绝",
 			status: "rejected",
+		});
+	});
+
+	it("卡片总览 badge 优先展示稿件打回态", () => {
+		expect(proposalOverviewBadge("manuscript_submitted", "rejected")).toEqual({
+			label: "稿件被拒",
+			tone: "danger",
+		});
+		expect(
+			proposalOverviewBadge("manuscript_submitted", "revision_requested"),
+		).toEqual({
+			label: "稿件需修改",
+			tone: "warning",
 		});
 	});
 });

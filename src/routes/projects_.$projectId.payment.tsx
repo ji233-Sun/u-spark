@@ -56,7 +56,7 @@ function PaymentCodePage() {
 					<h1 className="demo-title">收款码上传</h1>
 					<p className="demo-muted mt-3 text-sm">
 						{detail.projectTitle} ·
-						项目级单一收款码，稿酬全额打给收款负责人，作者间线下分账。
+						收款码填报属于信息补充阶段，稿酬由组织者核定后由立项者上传。
 					</p>
 				</header>
 
@@ -103,7 +103,7 @@ function PaymentCodePage() {
 						) : (
 							<div className="demo-alert demo-alert-danger">
 								<p className="m-0 text-sm">
-									信息补充已截止，收款码入口已关闭。
+									当前不在信息补充填报窗口，收款码入口已关闭。
 								</p>
 							</div>
 						)}

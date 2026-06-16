@@ -19,13 +19,9 @@ export function validateRemunerationAmount(raw: unknown): AmountResult {
 	return { ok: true, amount: n.toFixed(2) };
 }
 
-// 可被核定稿酬的项目状态：立项通过及之后（排除草稿 / 被拒 / 撤回）。
+// 稿酬分配属于信息补充阶段：稿件审核通过后项目进入 info_supplement 才可核定。
 export const REMUNERATION_ELIGIBLE_STATUSES = [
-	"proposal_approved",
-	"manuscript_submitted",
-	"manuscript_approved",
 	"info_supplement",
-	"completed",
 ] satisfies ProjectStatus[];
 
 export function canAssignRemuneration(status: ProjectStatus): boolean {
@@ -40,10 +36,15 @@ export function isPaymentStatus(value: unknown): value is PaymentStatus {
 	return value === "pending" || value === "paid";
 }
 
-// 收款码上传开放条件（T22）：仅当已核定稿酬、且信息补充 DDL 未过。
+// 收款码上传开放条件（T22）：仅信息补充阶段、已核定稿酬、且信息补充 DDL 未过。
 export function canUploadPaymentCode(
+	projectStatus: ProjectStatus,
 	remunerationAssigned: boolean,
 	infoDeadlinePassed: boolean,
 ): boolean {
-	return remunerationAssigned && !infoDeadlinePassed;
+	return (
+		projectStatus === "info_supplement" &&
+		remunerationAssigned &&
+		!infoDeadlinePassed
+	);
 }

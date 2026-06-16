@@ -76,9 +76,11 @@ describe("收货地址校验", () => {
 });
 
 describe("作者管理窗口", () => {
-	it("信息补充 DDL 前可管理", () => {
+	it("仅信息补充 DDL 前可管理", () => {
 		expect(canManageAuthors("info_supplement", false)).toBe(true);
-		expect(canManageAuthors("proposal_approved", false)).toBe(true);
+		expect(canManageAuthors("proposal_approved", false)).toBe(false);
+		expect(canManageAuthors("manuscript_approved", false)).toBe(false);
+		expect(canManageAuthors("completed", false)).toBe(false);
 	});
 
 	it("DDL 后关闭", () => {

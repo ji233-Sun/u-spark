@@ -1,5 +1,37 @@
 import type { TimelineNode } from "#/components/ui";
+import {
+	MANUSCRIPT_STATUS_TONES,
+	PROJECT_STATUS_LABELS,
+	PROJECT_STATUS_TONES,
+	type Tone,
+} from "./labels.ts";
 import type { ManuscriptStatus, ProjectStatus } from "./state-machine.ts";
+
+export type ProposalOverviewBadge = {
+	label: string;
+	tone: Tone;
+};
+
+export function proposalOverviewBadge(
+	projectStatus: ProjectStatus,
+	manuscriptStatus?: ManuscriptStatus | null,
+): ProposalOverviewBadge {
+	if (
+		projectStatus === "manuscript_submitted" &&
+		(manuscriptStatus === "rejected" ||
+			manuscriptStatus === "revision_requested")
+	) {
+		return {
+			label: manuscriptStatus === "rejected" ? "稿件被拒" : "稿件需修改",
+			tone: MANUSCRIPT_STATUS_TONES[manuscriptStatus],
+		};
+	}
+
+	return {
+		label: PROJECT_STATUS_LABELS[projectStatus],
+		tone: PROJECT_STATUS_TONES[projectStatus],
+	};
+}
 
 export function proposalTimelineNodes(
 	projectStatus: ProjectStatus,

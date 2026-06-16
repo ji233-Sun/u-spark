@@ -58,7 +58,7 @@ function PaymentsPage() {
 				<p className="island-kicker mb-2">Organizer</p>
 				<h1 className="demo-title">稿酬分配</h1>
 				<p className="demo-muted mt-3 text-sm">
-					为通过的立项核定稿酬总额（项目级，作者间线下分账）。核定后创作者可在信息补充阶段上传收款码。
+					稿酬分配归入信息补充阶段，仅展示已进入信息补充的项目。
 				</p>
 			</header>
 
@@ -73,7 +73,9 @@ function PaymentsPage() {
 					<h2 className="m-0 text-lg font-bold text-[var(--sea-ink)]">
 						暂无可核定稿酬的立项
 					</h2>
-					<p className="demo-muted mt-2 text-sm">立项通过后会出现在这里。</p>
+					<p className="demo-muted mt-2 text-sm">
+						稿件审核通过并进入信息补充后会出现在这里。
+					</p>
 				</section>
 			) : (
 				<section className="grid gap-4">

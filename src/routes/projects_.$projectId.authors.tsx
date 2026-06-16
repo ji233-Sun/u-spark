@@ -105,7 +105,9 @@ function AuthorsPage() {
 				</p>
 				{!payload.canManage && (
 					<div className="demo-alert demo-alert-danger mt-3">
-						<p className="m-0 text-sm">信息补充已截止，作者信息已锁定。</p>
+						<p className="m-0 text-sm">
+							仅信息补充阶段可填报作者与收货信息，当前信息已锁定。
+						</p>
 					</div>
 				)}
 			</header>

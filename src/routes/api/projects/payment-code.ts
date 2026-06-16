@@ -37,6 +37,7 @@ async function loadContext(projectId: string, userId: string) {
 		.select({
 			id: project.id,
 			title: project.title,
+			status: project.status,
 			createdBy: project.createdBy,
 			infoSupplementDeadline: activity.infoSupplementDeadline,
 			specialInfoSupplementDeadline: project.specialInfoSupplementDeadline,
@@ -85,7 +86,11 @@ async function getPaymentCode({ request }: { request: Request }) {
 		amount: row.amount,
 		paymentStatus: row.paymentStatus as "pending" | "paid" | null,
 		infoDeadlinePassed,
-		canUpload: canUploadPaymentCode(remunerationAssigned, infoDeadlinePassed),
+		canUpload: canUploadPaymentCode(
+			row.status,
+			remunerationAssigned,
+			infoDeadlinePassed,
+		),
 		code: row.codeImage
 			? { url: signedFileUrl(row.codeImage), payeeName: row.codePayee }
 			: null,
@@ -132,9 +137,11 @@ async function uploadPaymentCode({ request }: { request: Request }) {
 			{ status: 400 },
 		);
 	}
-	if (!canUploadPaymentCode(remunerationAssigned, infoDeadlinePassed)) {
+	if (
+		!canUploadPaymentCode(row.status, remunerationAssigned, infoDeadlinePassed)
+	) {
 		return Response.json(
-			{ ok: false, error: "信息补充已截止，收款码入口已关闭。" },
+			{ ok: false, error: "仅信息补充阶段可上传收款码。" },
 			{ status: 400 },
 		);
 	}
